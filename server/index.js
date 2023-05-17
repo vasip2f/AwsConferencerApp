@@ -62,6 +62,7 @@ const EventRoute = require('./router/EventRoutes');
 app.use('/', cors(corsOptions), EventRoute);
 const EventTimeSlotRoute = require('./router/EventTimeSlotRoute');
 app.use('/', EventTimeSlotRoute)
+const sendEmail = require("./controller/sendEmail");
 
 
 const _dirname = path.dirname("")
@@ -86,16 +87,16 @@ app.use(bodyParser.json());
 app.use(cors(corsOptions));
 
 // PORT
-const PORT = 9002;
+// const PORT = 9003;
 
 app.get("/", (req, res) => {
   res.json({ message: "API Working" });
 });
-
+app.use('/', sendEmail)
 // router
 
 app.use("/user", user);
 
-app.listen(PORT, (req, res) => {
-  console.log(`Server Started at PORT ${PORT}`);
+app.listen(process.env.PORT, (req, res) => {
+  console.log(`Server Started at PORT ${process.env.PORT}`);
 });

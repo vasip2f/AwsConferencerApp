@@ -122,6 +122,7 @@ import { EyeIcon, EyeOffIcon } from "@heroicons/react/solid";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Clock from "./Clock";
+import Backendapi from "../Backendapi";
 
 
 function Login() {
@@ -134,8 +135,8 @@ function Login() {
   
 
   
-  const backendApiUrl  = process.env.REACT_APP_BACKEND_API_URL;
-  console.log(backendApiUrl)
+  // const backendApiUrl  = process.env.REACT_APP_BACKEND_API_URL;
+  // console.log(backendApiUrl)
 
   useEffect(() => {
     let interval = setInterval(() => {
@@ -156,8 +157,8 @@ function Login() {
     localStorage.setItem("objectId", objectId)
 
     axios
-      .post("http://44.206.231.97/user/login", data)
-      // .post(`${process.env.REACT_APP_BACKEND_API_URL}/user/login`, data)
+      // .post("http://44.206.231.97/user/login", data)
+      .post(`${Backendapi.REACT_APP_BACKEND_API_URL}/user/login`, data)
       .then((res) => {
         toast.success("Login Success 😊", {
           position: toast.POSITION.TOP_RIGHT,

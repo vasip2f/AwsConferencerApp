@@ -16,6 +16,7 @@ import moment from 'moment-timezone';
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Backendapi from '../Backendapi';
 
 export default function (props) {
   // localStorage.getItem("email").split("@")[0]
@@ -83,7 +84,7 @@ export default function (props) {
 
     const config = { headers: { "Content-Type": "application/json" } }
     try {
-      const { data } = await axios.post('http://44.206.231.97/create-event', payload, config);
+      const { data } = await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/create-event`, payload, config);
       localStorage.setItem("eventid", data.eventId)
       toast.success("Event is Confirmed 😊", {
         position: toast.POSITION.TOP_RIGHT,
@@ -100,8 +101,8 @@ export default function (props) {
 
       try {
         const eventId = localStorage.getItem("eventid")
-        // console.log(eventId)
-        await axios.post(`http://44.206.231.97/send/${username}/${Emailusername}`)
+        console.log(eventId)
+        await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}`)
         toast.success("Check Your Confirmation Email")
       } catch (error) {
         toast.error("Unable to send Email")
@@ -125,7 +126,7 @@ export default function (props) {
 
 
   useEffect(() => {
-    axios.get(`http://44.206.231.97/user/getusers/${User}`)
+    axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/user/getusers/${User}`)
       .then((d) => {
         const cdata = d.data.username
         setData(cdata)
@@ -137,7 +138,7 @@ export default function (props) {
 
   //Calendar Display
   useEffect(() => {
-    axios.get('http://44.206.231.97/get-events')
+    axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/get-events`)
       .then((d) => {
         const cdata = d.data.map(item => {
           return { eventid: item._id, username: item.username, title: item.title, date: item.StartTime, EndTime: item.EndTime, User: item.User }
@@ -157,7 +158,7 @@ export default function (props) {
     const myString = objectId.replace(/^"(.*)"$/, '$1');
     // console.log("Hello wolld")
     // console.log(myString)
-    axios.get(`http://44.206.231.97/getuserevent/${myString}`)
+    axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/getuserevent/${myString}`)
       .then((d) => {
         setEventData(d.data.events)
         // console.log(d)
@@ -166,91 +167,8 @@ export default function (props) {
       .catch((e) => { console.log(e) })
   }, [])
 
-  //Update the Event
-
-  // const handleEdit = (e) => {
-  //   e.preventDefault();
-  //   if (moment(EndTime).isBefore(moment(StartTime))) {
-  //     toast.error("EndTime cannot be less than StartTime");
-  //     return;
-  //   }
-  //   const Credentials = {
-  //     title,
-  //     roomName,
-  //     StartTime: moment(StartTime).tz('Asia/Kolkata').format(),
-  //     EndTime: moment(EndTime).tz('Asia/Kolkata').format(),
-  //     availability
-  //   }
-  //   console.log(Credentials.StartTime)
-  //   console.log(Credentials.EndTime)
-  //   axios.put(`http://localhost:9002/update-event/${id}`, Credentials)
-  //     .then((d) => {
-  //       setData(d.data)
-  //       toast.success("Event updated successfully 😊", {
-  //         position: toast.POSITION.TOP_RIGHT,
-  //         autoClose: 2000,
-  //         hideProgressBar: true,
-  //         closeOnClick: true,
-  //         pauseOnHover: false,
-  //         draggable: true,
-  //         progress: undefined,
-  //       });
-  //       try {
-  //         await axios.post(`http://localhost:9002/send/${username}/${Emailusername}`)
-  //         toast.success("please check Your Email")
-  //       } catch (error) {
-  //         toast.error("Unable to send Email")
-  //       }
-  //     })
-
-  //     .catch((e) => { console.log(e) })
-  //   navigate("/Dashboard");
-  //   // window.location.reload();
-
-  // }
-
-  // const handleEdit = async (e) => { // Add the 'async' keyword here
-  //   e.preventDefault();
-  //   if (moment(EndTime).isBefore(moment(StartTime))) {
-  //     toast.error("EndTime cannot be less than StartTime");
-  //     return;
-  //   }
-  //   const Credentials = {
-  //     title,
-  //     roomName,
-  //     StartTime: moment(StartTime).tz('Asia/Kolkata').format(),
-  //     EndTime: moment(EndTime).tz('Asia/Kolkata').format(),
-  //     availability
-  //   };
-  //   console.log(Credentials.StartTime);
-  //   console.log(Credentials.EndTime);
-  //   try { // Move the 'try' block inside the async function
-  //     const response = await axios.put(`http://localhost:9002/update-event/${id}`, Credentials);
-  //     setData(response.data);
-  //     toast.success("Event updated successfully 😊", {
-  //       position: toast.POSITION.TOP_RIGHT,
-  //       autoClose: 2000,
-  //       hideProgressBar: true,
-  //       closeOnClick: true,
-  //       pauseOnHover: false,
-  //       draggable: true,
-  //       progress: undefined,
-  //     });
-
-  //     try {
-  //       await axios.post(`http://localhost:9002/send/${username}/${Emailusername}`);
-  //       toast.success("Check Your mail Event Detail is Updated");
-  //     } catch (error) {
-  //       toast.error("Unable to send Email");
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-
-  //   navigate("/Dashboard");
-  //   // window.location.reload();
-  // };
-
+  //update Event
+  
   const handleEdit = async (e) => {
     e.preventDefault();
     if (moment(EndTime).isBefore(moment(StartTime))) {
@@ -267,7 +185,7 @@ export default function (props) {
     // console.log(Credentials.StartTime);
     // console.log(Credentials.EndTime);
     try {
-      const response = await axios.put(`http://44.206.231.97/update-event/${id}`, Credentials);
+      const response = await axios.put(`${Backendapi.REACT_APP_BACKEND_API_URL}/update-event/${id}`, Credentials);
       setData(response.data);
       toast.success("Event updated successfully 😊", {
         position: toast.POSITION.TOP_RIGHT,
@@ -280,7 +198,7 @@ export default function (props) {
       });
 
       try {
-        await axios.post(`http://44.206.231.97/${username}/${Emailusername}`)
+        await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}`)
         toast.success("Check Your mail Event Detail is Updated");
       } catch (error) {
         toast.error("Unable to send Email");
@@ -299,7 +217,7 @@ export default function (props) {
 
   const handleDelete = () => {
 
-    axios.delete(`http://44.206.231.97/delete-event/${id}`)
+    axios.delete(`${Backendapi.REACT_APP_BACKEND_API_URL}/delete-event/${id}`)
       .then((d) => {
         setData(d.data)
         toast.success("Event deleted successfully 😊", {

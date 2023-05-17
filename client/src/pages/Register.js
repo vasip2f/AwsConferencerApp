@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import { EyeIcon, EyeOffIcon } from "@heroicons/react/solid";
 import { toast } from "react-toastify";
+import Backendapi from "../Backendapi";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -46,7 +47,8 @@ function Register() {
       password: password,
     };
     axios
-      .post("http://44.206.231.97/user/signup", data)
+      // .post("http://44.206.231.97/user/signup", data)
+      .post(`{${Backendapi.REACT_APP_BACKEND_API_URL}/user/signup}`)
       .then((res) => {
         toast.success("Registration is Success 😊", {
           position: toast.POSITION.TOP_RIGHT,

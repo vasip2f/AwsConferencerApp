@@ -12,6 +12,7 @@ import *as bootstrap from "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import '../index.css';
 import '../App.css';
+import Backendapi from '../Backendapi';
 
 
 
@@ -62,7 +63,7 @@ export default function () {
             availability: availability
         }
         const config = { headers: { "Content-Type": "Application/json" } }
-        await axios.post('http://44.206.231.97/create-event', payload, config)
+        await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/create-event`, payload, config)
             .then(() => { alert("Event is Confirmed") })
             .catch((e) => { alert("The slot is already booked") })
             // window.location.reload()
@@ -73,7 +74,7 @@ export default function () {
 
 
     useEffect(() => {
-        axios.get('http://44.206.231.97/get-events')
+        axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/get-events`)
             .then((d) => {
                 const cdata = d.data.map(item => {
                     return { username: item.username, title: item.title, date: item.StartTime }
@@ -91,7 +92,7 @@ export default function () {
     //this api Display Event 
 
     useEffect(() => {
-        axios.get('http://44.206.231.97/get-events')
+        axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/get-events`)
             .then((d) => {
                 setEventData(d.data)
                 const startTime = d.data[0].StartTime;
@@ -109,7 +110,7 @@ export default function () {
     //Update the Event
     const handleEdit = () => {
         const Credentials = { title, roomName, StartTime, EndTime, availability }
-        axios.put(`http://44.206.231.97/update-event/${id}`, Credentials)
+        axios.put(`${Backendapi.REACT_APP_BACKEND_API_URL}/update-event/${id}`, Credentials)
             .then((d) => {
                 setData(d.data)
             })
@@ -122,7 +123,7 @@ export default function () {
 
     const handleDelete = () => {
 
-        axios.delete(`http://44.206.231.97/delete-event/${id}`)
+        axios.delete(`${Backendapi.REACT_APP_BACKEND_API_URL}/delete-event/${id}`)
             .then((d) => {
                 setData(d.data)
             })
