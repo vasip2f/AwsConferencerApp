@@ -280,10 +280,7 @@ export default function (props) {
       });
 
       try {
-        await axios.post(`http://localhost:9002/send`, {
-          username,
-          Emailusername
-        });
+        await axios.post(`http://localhost:9002/send/${username}/${Emailusername}`)
         toast.success("Check Your mail Event Detail is Updated");
       } catch (error) {
         toast.error("Unable to send Email");
