@@ -156,7 +156,7 @@ function Login() {
     localStorage.setItem("objectId", objectId)
 
     axios
-      .post("http://localhost:9002/user/login", data)
+      .post("http://44.205.248.250/user/login", data)
       // .post(`${process.env.REACT_APP_BACKEND_API_URL}/user/login`, data)
       .then((res) => {
         toast.success("Login Success 😊", {
