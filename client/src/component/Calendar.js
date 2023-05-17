@@ -83,7 +83,7 @@ export default function (props) {
 
     const config = { headers: { "Content-Type": "application/json" } }
     try {
-      const { data } = await axios.post('http://localhost:9002/create-event', payload, config);
+      const { data } = await axios.post('http://44.205.248.250:9002/create-event', payload, config);
       localStorage.setItem("eventid", data.eventId)
       toast.success("Event is Confirmed 😊", {
         position: toast.POSITION.TOP_RIGHT,
@@ -94,14 +94,14 @@ export default function (props) {
         draggable: true,
         progress: undefined,
       });
-      console.log(data)
+      // console.log(data)
 
 
 
       try {
         const eventId = localStorage.getItem("eventid")
-        console.log(eventId)
-        await axios.post(`http://localhost:9002/send/${username}/${Emailusername}`)
+        // console.log(eventId)
+        await axios.post(`http://44.205.248.250:9002/send/${username}/${Emailusername}`)
         toast.success("Check Your Confirmation Email")
       } catch (error) {
         toast.error("Unable to send Email")
@@ -125,11 +125,11 @@ export default function (props) {
 
 
   useEffect(() => {
-    axios.get(`http://localhost:9002/user/getusers/${User}`)
+    axios.get(`http://44.205.248.250:9002/user/getusers/${User}`)
       .then((d) => {
         const cdata = d.data.username
         setData(cdata)
-        console.log(cdata)
+        // console.log(cdata)
       })
       .catch((e) => { console.log(e) })
 
@@ -137,13 +137,13 @@ export default function (props) {
 
   //Calendar Display
   useEffect(() => {
-    axios.get('http://localhost:9002/get-events')
+    axios.get('http://44.205.248.250:9002/get-events')
       .then((d) => {
         const cdata = d.data.map(item => {
           return { eventid: item._id, username: item.username, title: item.title, date: item.StartTime, EndTime: item.EndTime, User: item.User }
         })
         setData(cdata)
-        console.log(cdata)
+        // console.log(cdata)
       })
       .catch((e) => { console.log(e) })
 
@@ -155,12 +155,12 @@ export default function (props) {
 
     const objectId = localStorage.getItem('objectId');
     const myString = objectId.replace(/^"(.*)"$/, '$1');
-    console.log("Hello wolld")
-    console.log(myString)
-    axios.get(`http://localhost:9002/getuserevent/${myString}`)
+    // console.log("Hello wolld")
+    // console.log(myString)
+    axios.get(`http://44.205.248.250:9002/getuserevent/${myString}`)
       .then((d) => {
         setEventData(d.data.events)
-        console.log(d)
+        // console.log(d)
       })
 
       .catch((e) => { console.log(e) })
@@ -264,10 +264,10 @@ export default function (props) {
       EndTime: moment(EndTime).tz('Asia/Kolkata').format(),
       availability
     };
-    console.log(Credentials.StartTime);
-    console.log(Credentials.EndTime);
+    // console.log(Credentials.StartTime);
+    // console.log(Credentials.EndTime);
     try {
-      const response = await axios.put(`http://localhost:9002/update-event/${id}`, Credentials);
+      const response = await axios.put(`http://44.205.248.250:9002/update-event/${id}`, Credentials);
       setData(response.data);
       toast.success("Event updated successfully 😊", {
         position: toast.POSITION.TOP_RIGHT,
@@ -280,7 +280,7 @@ export default function (props) {
       });
 
       try {
-        await axios.post(`http://localhost:9002/send/${username}/${Emailusername}`)
+        await axios.post(`http://44.205.248.250:9002/${username}/${Emailusername}`)
         toast.success("Check Your mail Event Detail is Updated");
       } catch (error) {
         toast.error("Unable to send Email");
@@ -299,7 +299,7 @@ export default function (props) {
 
   const handleDelete = () => {
 
-    axios.delete(`http://localhost:9002/delete-event/${id}`)
+    axios.delete(`http://44.205.248.250:9002/delete-event/${id}`)
       .then((d) => {
         setData(d.data)
         toast.success("Event deleted successfully 😊", {
@@ -318,7 +318,7 @@ export default function (props) {
 
   }
 
-  console.log(Data)
+  // console.log(Data)
 
 
 
