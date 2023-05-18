@@ -1,6 +1,6 @@
 
 const Backendapi = {
-    REACT_APP_BACKEND_API_URL:"http://54.172.100.216"
+    REACT_APP_BACKEND_API_URL:"http://65.0.135.17"
     
 
     
