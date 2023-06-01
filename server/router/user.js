@@ -2,13 +2,13 @@ const express = require("express");
 const { check, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const bodyParser = require("body-parser");
 const User = require("../modal/User");
 const router = express.Router();
-const dns = require("dns")
+const dns = require("dns");
 
 
 
+// Signup route
 router.post(
   "/signup",
   [
@@ -17,6 +17,7 @@ router.post(
     check("password", "Please enter a valid password").isLength({
       min: 6,
     }),
+    check("isSuperUser", "Invalid value for isSuperUser").optional().isBoolean(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -26,16 +27,10 @@ router.post(
       });
     }
 
-    const body = req.body;
-
-    const username = body.username;
-    const email = body.email;
-    const password = body.password;
+    const { username, email, password, isSuperUser } = req.body;
 
     try {
-      let user = await User.findOne({
-        email,
-      });
+      let user = await User.findOne({ email });
       if (user) {
         return res.status(400).json({
           msg: "User Already Exists",
@@ -56,6 +51,7 @@ router.post(
           username,
           email,
           password,
+          isSuperUser: isSuperUser || false, // Set isSuperUser flag based on request body
         });
 
         const salt = await bcrypt.genSalt(10);
@@ -66,6 +62,7 @@ router.post(
         const payload = {
           user: {
             id: user.id,
+            isSuperUser: user.isSuperUser,
           },
         };
 
@@ -90,7 +87,7 @@ router.post(
   }
 );
 
-
+// Login route
 router.post(
   "/login",
   [
@@ -107,21 +104,17 @@ router.post(
       });
     }
 
-    const body = req.body
-    const email = body.email
-    const password = body.password
+    const { email, password } = req.body;
 
     try {
-      let user = await User.findOne({
-        email,
-      });
+      let user = await User.findOne({ email });
       if (!user) {
         return res.status(400).json({
           msg: "User Not Registered",
         });
       }
 
-      const isMatch = await bcrypt.compare(password, user.password)
+      const isMatch = await bcrypt.compare(password, user.password);
 
       if (!isMatch) {
         return res.status(401).json({
@@ -129,13 +122,10 @@ router.post(
         });
       }
 
-
-
-
-
       const payload = {
         user: {
           id: user.id,
+          isSuperUser: user.isSuperUser,
         },
       };
 
@@ -149,8 +139,7 @@ router.post(
           if (err) throw err;
           res.status(200).json({
             token,
-            user
-
+            user,
           });
         }
       );
@@ -161,17 +150,33 @@ router.post(
   }
 );
 
-
-router.get('/getusers', async (req, res) => {
-  const allusers = await User.find()
-  res.send(allusers)
+// Get all users
+router.get("/getusers", async (req, res) => {
+  try {
+    const allUsers = await User.find();
+    console.log(allUsers);
+    res.send(allUsers);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send("Server Error");
+  }
 });
 
-
-router.get('/getusers/:id', async (req, res) => {
-  const _id = req.params.id;
-  const allusersById = await User.findById(_id)
-  res.send(allusersById)
+// Get user by ID
+router.get("/getusers/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        msg: "User not found",
+      });
+    }
+    res.send(user);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send("Server Error");
+  }
 });
 
 module.exports = router;
@@ -195,12 +200,11 @@ module.exports = router;
 //       });
 //     }
 
-//     const body = req.body
+//     const body = req.body;
 
-//     console.log(req);
-//     const username = body.username 
-//     const email =  body.email 
-//     const password =  body.password 
+//     const username = body.username;
+//     const email = body.email;
+//     const password = body.password;
 
 //     try {
 //       let user = await User.findOne({
@@ -212,16 +216,96 @@ module.exports = router;
 //         });
 //       }
 
-//       user = new User({
-//         username,
-//         email,
-//         password,
+//       // Check if the email domain exists and is authorized
+//       const [localPart, domain] = email.split("@");
+//       dns.resolveMx(domain, async (err, addresses) => {
+//         if (err || !addresses || addresses.length === 0) {
+//           return res.status(400).json({
+//             msg: "Invalid or unauthorized email domain",
+//           });
+//         }
+
+//         // Continue with the user registration
+//         user = new User({
+//           username,
+//           email,
+//           password,
+//         });
+
+//         const salt = await bcrypt.genSalt(10);
+//         user.password = await bcrypt.hash(password, salt);
+
+//         await user.save();
+
+//         const payload = {
+//           user: {
+//             id: user.id,
+//           },
+//         };
+
+//         jwt.sign(
+//           payload,
+//           "randomString",
+//           {
+//             expiresIn: 10000,
+//           },
+//           (err, token) => {
+//             if (err) throw err;
+//             res.status(200).json({
+//               token,
+//             });
+//           }
+//         );
 //       });
+//     } catch (err) {
+//       console.log(err.message);
+//       res.status(500).send("Error in Saving");
+//     }
+//   }
+// );
 
-//       const salt = await bcrypt.genSalt(10);
-//       user.password = await bcrypt.hash(password, salt);
 
-//       await user.save();
+// router.post(
+//   "/login",
+//   [
+//     check("email", "Please enter a valid email").isEmail(),
+//     check("password", "Please enter a valid password").isLength({
+//       min: 6,
+//     }),
+//   ],
+//   async (req, res) => {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//       return res.status(400).json({
+//         errors: errors.array(),
+//       });
+//     }
+
+//     const body = req.body
+//     const email = body.email
+//     const password = body.password
+
+//     try {
+//       let user = await User.findOne({
+//         email,
+//       });
+//       if (!user) {
+//         return res.status(400).json({
+//           msg: "User Not Registered",
+//         });
+//       }
+
+//       const isMatch = await bcrypt.compare(password, user.password)
+
+//       if (!isMatch) {
+//         return res.status(401).json({
+//           msg: "Incorrect Password",
+//         });
+//       }
+
+
+
+
 
 //       const payload = {
 //         user: {
@@ -233,18 +317,53 @@ module.exports = router;
 //         payload,
 //         "randomString",
 //         {
-//           expiresIn: 10000,
+//           expiresIn: 3600,
 //         },
 //         (err, token) => {
 //           if (err) throw err;
 //           res.status(200).json({
 //             token,
+//             user
+
 //           });
 //         }
 //       );
 //     } catch (err) {
 //       console.log(err.message);
-//       res.status(500).send("Error in Saving");
+//       res.status(500).send("Server Error");
 //     }
 //   }
 // );
+
+// // Get all users
+// router.get("/getusers", async (req, res) => {
+//   try {
+//     const allUsers = await User.find();
+//     console.log(allUsers);
+//     res.send(allUsers);
+//   } catch (err) {
+//     console.log(err.message);
+//     res.status(500).send("Server Error");
+//   }
+// });
+
+// // Get user by ID
+// router.get("/getusers/:id", async (req, res) => {
+//   try {
+//     const userId = req.params.id;
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({
+//         msg: "User not found",
+//       });
+//     }
+//     res.send(user);
+//   } catch (err) {
+//     console.log(err.message);
+//     res.status(500).send("Server Error");
+//   }
+// });
+
+// module.exports = router;
+
+

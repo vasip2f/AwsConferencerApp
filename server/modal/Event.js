@@ -54,6 +54,11 @@ const EventSchema = new mongoose.Schema({
         type: Boolean,
         required: true
     },
+    status: {
+        type: String,
+        enum: ['𝐈𝐧𝐢𝐭𝐢𝐚𝐭𝐞𝐝', '𝐂𝐨𝐧𝐟𝐢𝐫𝐦𝐞𝐝', '𝐑𝐞𝐣𝐞𝐜𝐭𝐞𝐝'],
+        default: '𝐈𝐧𝐢𝐭𝐢𝐚𝐭𝐞𝐝'
+    },
     User: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -65,58 +70,6 @@ const EventSchema = new mongoose.Schema({
 const Event = mongoose.model("Event", EventSchema);
 
 module.exports = Event;
-
-
-
-
-
-
-// const { default: mongoose } = require('mongoose');
-
-// const EventSchema = new mongoose.Schema({
-
-//     username: {
-//         type: String,
-//         required: [true, "Please Enter Your name"]
-//     },
-//     title: {
-//         type: String,
-//         required: [true, "Title is required"]
-//     },
-//     roomName: {
-//         type: String,
-//         required: [true, "Please Select Your Room"]
-//     },
-//     StartTime: {
-//         type: String,
-//         required: [true, "Start time is missing"],
-//     },
-
-//     EndTime: {
-//         type: String,
-//         required: [true, "End time is missing"],
-
-//     },
-
-//     availability: {
-//         type: Boolean,
-//         required: true
-//     },
-//     user: {
-//         type: mongoose.Schema.Types.ObjectId,
-//         ref: 'User',
-//         required: true
-//       }
-
-// },
-
-//     {
-//         timestamp: true
-//     });
-
-// const event = new mongoose.model("Event", EventSchema);
-
-// module.exports = event;
 
 
 

@@ -28,6 +28,30 @@
     
   }
 
+  .p2f-img {
+    background-image: url('./img/P2F_Logo.webp');
+    background-size: cover;
+    background-position: center;
+    width: auto;
+    height:flex;
+    
+  }
+
+  .dashboard-img {
+    background-image: url('./img/dashboard.png');
+    background-size: 30px;
+    width: 30px;
+    height:30px;
+    
+  }
+  .calendarIcon-img {
+    background-image: url('./img/calendar-icon.png');
+    background-size: 30px;
+    width: 30px;
+    height:30px;
+    
+  }
+
   .anima-page {
     background-image: url('./img/animate.gif');
     background-size: cover;
@@ -224,3 +248,16 @@
   border-radius: 50px;
 }
 
+
+
+  .event-yellow {
+    background-color: hsla(67, 73%, 70%, 0.959);
+  }
+
+  .event-green {
+    background-color: rgb(186, 8, 174);
+  }
+
+  .event-gray {
+    background-color: rgb(241, 128, 128);
+  }

@@ -17,24 +17,38 @@ import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Backendapi from '../Backendapi';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import "../App.css"
+
+
+
+
+
 
 export default function (props) {
   // localStorage.getItem("email").split("@")[0]
-  const [username, setuserName] = useState(localStorage.getItem("email").split("@")[0]);
+  const [username, setuserName] = useState(localStorage.getItem("username"));
+  console.log(username)
   const [Emailusername, setEmailusername] = useState(localStorage.getItem("email"));
+  console.log(Emailusername)
   const [title, setTitle] = useState("");
   const [roomName, setroomName] = useState("Big Room");
   const [StartTime, setStartTime] = useState(new Date());
   const [EndTime, setEndTime] = useState(new Date());
   const [availability, setAvailability] = useState(true);
   const [loginusername, setLoginUsername] = useState("")
+  const [Hours, setHours, getHours] = useState(new Date())
   const navigate = useNavigate();
+  const [showEndTime, setShowEndTime] = useState(false);
+  const [endTimeManual, setEndTimeManual] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [displayEndTime, setDisplayEndTime] = useState(null)
+  const [meetingTime, setMeetingTime] = useState({ startTime: null, endTime: null });
 
 
   const objectId = localStorage.getItem('objectId');
   const userid = objectId.replace(/^"(.*)"$/, '$1');
   const [User, setUser] = useState(userid);
-
   const [eventid, setEventid] = useState()
 
   const [Data, setData] = useState([]); // store the post data
@@ -64,28 +78,41 @@ export default function (props) {
   //id for update record and delete
   const [id, setId] = useState("");
 
-
+  //create a event
   const handleclick = async (event) => {
     event.preventDefault();
+
     if (moment(EndTime).isBefore(moment(StartTime))) {
       toast.error("EndTime cannot be less than StartTime");
       return;
     }
+
+    // Condition for past time slot booking
+    const currentTimeIST = moment().tz('Asia/Kolkata');
+
+    if (moment(StartTime).isBefore(currentTimeIST)) {
+      toast.error("Cannot book events for past time slots");
+      setTimeout(() => {
+        toast.info(`Book your event with the current time: ${currentTimeIST.format('YYYY-MM-DD HH:mm:ss')}`);
+      }, 3000);
+      return;
+    }
+
     const payload = {
-      username: username,
+      username:username,
       title: title,
       roomName: roomName,
       StartTime: moment(StartTime).tz('Asia/Kolkata').format(),
       EndTime: moment(EndTime).tz('Asia/Kolkata').format(),
       availability: availability,
       User: User,
+    };
 
-    }
+    const config = { headers: { "Content-Type": "application/json" } };
 
-    const config = { headers: { "Content-Type": "application/json" } }
     try {
       const { data } = await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/create-event`, payload, config);
-      localStorage.setItem("eventid", data.eventId)
+      localStorage.setItem("eventid", data.eventId);
       toast.success("Event is Confirmed 😊", {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
@@ -95,95 +122,149 @@ export default function (props) {
         draggable: true,
         progress: undefined,
       });
-      // console.log(data)
-
-
 
       try {
-        const eventId = localStorage.getItem("eventid")
-        console.log(eventId)
-        await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}`)
-        toast.success("Check Your Confirmation Email")
+        const eventId = localStorage.getItem("eventid");
+        console.log(eventId);
+        console.log(username)
+        await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}/${title}`);
+        await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/send/superuser/${username}/${Backendapi.REACT_APP_SuperUser_EMAIL}/${title}`); // Send email to superuser
+        toast.success("Check Your Confirmation Email");
       } catch (error) {
-        toast.error("Unable to send Email")
+        toast.error("Unable to send Email");
       }
 
-      // window.location.reload();
-      navigate("/Dashboard");
+      window.location.reload();
     } catch (e) {
       if (e.response.status === 409) {
         toast.error("The slot is already booked ☹️");
       } else {
         toast.error("The slot is already booked ☹️");
         navigate("/Calendar");
-        // window.location.reload();
       }
-
     }
-  }
+  };
 
   //display user details
-
-
   useEffect(() => {
     axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/user/getusers/${User}`)
       .then((d) => {
-        const cdata = d.data.username
+        const cdata = d.data
         setData(cdata)
-        // console.log(cdata)
+        console.log(cdata)
       })
       .catch((e) => { console.log(e) })
 
   }, [])
 
+
+
   //Calendar Display
+  // useEffect(() => {
+  //   axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/get-events`)
+  //     .then((d) => {
+  //       const cdata = d.data.map(item => {
+  //         return { eventid: item._id, username: item.username, title: item.title, date: item.StartTime, EndTime: item.EndTime, User: item.User }
+  //       })
+  //       setData(cdata)
+  //       // console.log(cdata)
+  //     })
+  //     .catch((e) => { console.log(e) })
+
+  // }, [])
+
+
+
+  // FullCalendar Display Color Variation
+  let userEmailName;
+
   useEffect(() => {
     axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/get-events`)
       .then((d) => {
+        const currentTime = moment(); // Get current system date and time
+        console.log(d.data)
         const cdata = d.data.map(item => {
-          return { eventid: item._id, username: item.username, title: item.title, date: item.StartTime, EndTime: item.EndTime, User: item.User }
-        })
-        setData(cdata)
-        // console.log(cdata)
+          const startTime = moment(item.StartTime);
+          const endTime = moment(item.EndTime);
+          let colorClass;
+         console.log(item)
+          if (currentTime.isBefore(startTime)) {
+            colorClass = 'event-yellow'; // Condition 1: StartTime is not yet started
+          } else if (currentTime.isBetween(startTime, endTime)) {
+            colorClass = 'event-green'; // Condition 2: StartTime is started but not yet expired
+          } else {
+            colorClass = 'event-gray'; // Condition 3: EndTime is expired
+          }
+          setuserName(item.User.username)
+          userEmailName = item.User.username;
+          console.log(item)
+          return {
+            eventid: item._id,
+            username: item.User.username,
+            title: item.title,
+            roomName: item.roomName,
+            date: item.StartTime,
+            EndTime: item.EndTime,
+            User: item.User,
+            colorClass: colorClass // Add colorClass property to the object
+          };
+        });
+
+
+        setData(cdata);
+        console.log(cdata)
       })
-      .catch((e) => { console.log(e) })
 
-  }, [])
+      .catch((e) => { console.log(e) });
+  }, []);
+  
+  console.log(username)
+  // console.log(userEmailName)
 
-
+  // Display Login User Data
 
   useEffect(() => {
 
     const objectId = localStorage.getItem('objectId');
     const myString = objectId.replace(/^"(.*)"$/, '$1');
-    // console.log("Hello wolld")
-    // console.log(myString)
     axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/getuserevent/${myString}`)
       .then((d) => {
         setEventData(d.data.events)
-        // console.log(d)
+        console.log(d.data.events)
       })
-
       .catch((e) => { console.log(e) })
   }, [])
 
+
+
   //update Event
-  
+
   const handleEdit = async (e) => {
     e.preventDefault();
+
+    const currentTimeIST = moment().tz('Asia/Kolkata');
+
+    if (moment(StartTime).isBefore(currentTimeIST)) {
+      toast.error("Cannot update events for past time slots");
+      setTimeout(() => {
+        toast.info(`Update your event with the current time: ${currentTimeIST.format('YYYY-MM-DD HH:mm:ss')}`);
+      }, 3000);
+      return;
+    }
+
     if (moment(EndTime).isBefore(moment(StartTime))) {
       toast.error("EndTime cannot be less than StartTime");
       return;
     }
+
     const Credentials = {
       title,
       roomName,
-      StartTime: moment(StartTime).tz('Asia/Kolkata').format(),
-      EndTime: moment(EndTime).tz('Asia/Kolkata').format(),
+      StartTime: moment.tz(StartTime, 'YYYY-MM-DD HH:mm:ss', 'Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss'),
+      EndTime: moment.tz(EndTime, 'YYYY-MM-DD HH:mm:ss', 'Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss'),
       availability
     };
-    // console.log(Credentials.StartTime);
-    // console.log(Credentials.EndTime);
+
     try {
       const response = await axios.put(`${Backendapi.REACT_APP_BACKEND_API_URL}/update-event/${id}`, Credentials);
       setData(response.data);
@@ -198,46 +279,93 @@ export default function (props) {
       });
 
       try {
-        await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}`)
-        toast.success("Check Your mail Event Detail is Updated");
+        await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}`);
+        toast.success("Check your email, event details have been updated");
       } catch (error) {
-        toast.error("Unable to send Email");
+        toast.error("Unable to send email");
       }
     } catch (error) {
-      console.log(error);
+      if (error.response.status === 409) {
+        toast.error("The slot is already booked ☹️");
+      } else {
+        toast.error("The slot is already booked ☹️");
+      }
+      navigate("/Calendar");
     }
 
     navigate("/Dashboard");
-    // window.location.reload();
+  };
+
+  //handle delete function
+  const handleDelete = async () => {
+
+
+    try {
+      const response = await axios.delete(`${Backendapi.REACT_APP_BACKEND_API_URL}/delete-event/${id}`);
+      setData(response.data.eventId);
+      console.log(response.data.title)
+      const mailTitle = response.data.title
+      toast.success("Event deleted successfully 😊", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+      });
+
+      // Send deletion confirmation email
+      try {
+        const eventId = localStorage.getItem("eventid");
+        console.log(username.username)
+        await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/send/deletion/${username}/${Emailusername}/${mailTitle}`);
+        await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/send/deletionSuperUser/${username}/${Backendapi.REACT_APP_SuperUser_EMAIL}/${mailTitle}`);
+        toast.success("Deletion confirmation email sent");
+      } catch (error) {
+        toast.error("Unable to send deletion confirmation email");
+      }
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
+    window.location.reload();
+    // navigate("/Dashboard");
   };
 
 
+  //Modal for popup
+  const handleOpenModal = () => {
+    setShowModal(true);
+  };
 
-  //handle delete function
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
-  const handleDelete = () => {
+  // StartTime and EndTime Input field Time Display Function
 
-    axios.delete(`${Backendapi.REACT_APP_BACKEND_API_URL}/delete-event/${id}`)
-      .then((d) => {
-        setData(d.data)
-        toast.success("Event deleted successfully 😊", {
-          position: toast.POSITION.TOP_RIGHT,
-          autoClose: 2000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
-        });
-      })
-      .catch((e) => { console.log(e) })
-    navigate("/Dashboard");
-    // window.location.reload();
+  useEffect(() => {
+    // Get the current datetime
+    const currentDatetime = new Date().toISOString().slice(0, 16);
 
-  }
+    // Set the current datetime as the initial value for StartTime and EndTime
+    setStartTime(currentDatetime);
+    setEndTime(currentDatetime);
+  }, []);
 
-  // console.log(Data)
 
+  // Function to convert UTC time to IST
+  const convertToIST = (utcDateTime) => {
+    const istDateTime = moment.utc(utcDateTime).utcOffset("+05:30").format("YYYY-MM-DDTHH:mm");
+    return istDateTime;
+  };
+
+  // Function to convert IST time to UTC
+  const convertToUTC = (istDateTime) => {
+    const utcDateTime = moment(istDateTime).utc().format("YYYY-MM-DDTHH:mm");
+    return utcDateTime;
+  };
 
 
 
@@ -246,82 +374,114 @@ export default function (props) {
       <NavbarCalendar />
       <div>
 
+        {/* UserInput Form */}
         <div className='text-center'>
-          <Popup trigger=
-            {<Button className='text-black' style={{ backgroundColor: 'skyblue' }}><i className='fa fa-plu'></i>𝐒𝐜𝐡𝐞𝐝𝐮𝐥𝐞 𝐌𝐞𝐞𝐭𝐢𝐧𝐠</Button>}
-            position="bottom middle" backgroundColor="black" >
-            <div>
-              <form onSubmit={handleclick} style={{ backgroundColor: 'lightblue', padding: '20px', borderRadius: '5px', width: '350px' }}>
-                <label style={{ display: 'block', marginBottom: '10px', color: '#444', fontFamily: 'Arial', fontSize: '20px' }}>
-                  Hi, <span style={{ color: '#FF5733', fontWeight: 'bold' }}>{localStorage.getItem("email").split("@")[0]}</span>
-                  <span style={{ color: '#2980B9', fontWeight: 'bold' }}> Please book your Event</span>
-                </label>
-                <input
-                  type="text"
-                  value={username}
-                  onChange={e => setuserName(e.target.value)}
-                  disabled
-                  hidden='true'
-                  style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '3px', marginBottom: '15px' }}
-                />
+          <>
+            <Button
+              className="text-black"
+              style={{ backgroundColor: 'skyblue' }}
+              onClick={handleOpenModal}
+            >
 
-                <input
-                  type="text"
-                  value={User}
-                  onChange={e => setUser(e.target.value)}
-                  disabled
-                  hidden='true'
-                  style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '3px', marginBottom: '15px' }}
-                />
+              <span style={{ color: 'white', fontWeight: 'bold' }}>
+                <i className="fa fa-plu">Schedule Meeting</i>
+              </span>
+            </Button>
 
-                <label style={{ display: 'block', marginBottom: '10px', color: '#444' }}>𝕰𝖓𝖙𝖊𝖗 𝕰𝖛𝖊𝖓𝖙 𝕿𝖎𝖙𝖑𝖊✍</label>
-                <input
-                  type="text"
-                  value={title}
-                  onChange={e => setTitle(e.target.value)}
-                  required='please provide a title'
-                  style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '3px', marginBottom: '15px' }}
-                />
-                <label style={{ display: 'block', marginBottom: '10px', color: '#444' }}>𝓢𝓮𝓵𝓮𝓬𝓽 𝓡𝓸𝓸𝓶</label>
-                <select
-                  value={roomName}
-                  onChange={e => setroomName(e.target.value)}
-                  required
-                  style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '3px', marginBottom: '15px' }}
+            <Modal show={showModal} onHide={handleCloseModal} centered
+              style={{ backgroundColor: 'transparent' }}
+              backdrop="static"
+              keyboard={false}
+
+            >
+              <Modal.Header
+                closeButton
+                style={{ backgroundColor: 'lightgray' }}
+              >
+                <Modal.Title>
+                  <label style={{ display: 'block', marginBottom: '10px', color: '#444', fontFamily: 'Arial', fontSize: '20px' }}>
+                    <span style={{ color: 'black', fontWeight: 'bold' }}> Hi, </span>
+                    <span style={{ color: 'red', fontWeight: 'bold' }}>{username}</span>
+                    <span style={{ color: 'black', fontWeight: 'bold' }}> Please book your Event</span>
+                  </label>
+                </Modal.Title>
+              </Modal.Header>
+
+              <Modal.Body style={{ backgroundColor: 'lightgray' }}>
+                <form onSubmit={handleclick}
+                  style={{ backgroundColor: 'lightgray', padding: '20px', borderRadius: '5px', width: '350px' }}
                 >
-
-                  <option value="Big Room">Big Room</option>
-                  <option value="Small Room">Small Room</option>
-                  <option value="Booth One">Booth One</option>
-                  <option value="Booth Two">Booth Two</option>
-                </select>
-                <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '15px' }}>
-                  <label style={{ marginBottom: '10px', color: '#444' }}>𝓢𝓽𝓪𝓻𝓽 ⏰</label>
-                  <Datetime
-                    value={StartTime}
-                    onChange={date => setStartTime(date)}
+                  {/* <input
+                    type="text"
+                    className="form-control"
+                    value={username.username}
+                    onChange={(e) => setuserName(e.target.value)}
                     required
-                    style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '3px', marginBottom: '5px' }}
-                  />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '15px' }}>
-                  <label style={{ marginBottom: '10px', color: '#444' }}>𝓔𝓷𝓭 ⏰</label>
-                  <Datetime
-                    value={EndTime}
-                    onChange={date => setEndTime(date)}
-                    required
-                    style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '3px', marginBottom: '5px' }}
-                  />
-                </div>
-                <button
-                  type="submit"
-                  style={{ background: '#444', color: '#fff', padding: '10px 20px', borderRadius: '3px', border: 'none' }}>𝒜𝒹𝒹 𝐸𝓋𝑒𝓃𝓉</button>
-              </form>
-            </div>
+                    placeholder={username.username}
+                    hidden="true"
+                  /> */}
 
-          </Popup>
+                  {/* <lable>Enter Your Title</lable> */}
+                  <span style={{ color: 'black', fontWeight: 'bold' }}> Enter Your Title </span>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    required
+                  />
+                  {/* <label>Select Room:</label> */}
+                  <span style={{ color: 'black', fontWeight: 'bold' }}>Select Room</span>
+                  <select
+                    className="form-control"
+                    value={roomName}
+                    onChange={(e) => setroomName(e.target.value)}
+                    required
+                  >
+
+                    <option value="Big Room">Big Room</option>
+                    <option value="Small Room">Small Room</option>
+                    <option value="Booth One">Booth One</option>
+                    <option value="Booth Two">Booth Two</option>
+                  </select>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '15px' }}>
+                    <span style={{ color: 'black', fontWeight: 'bold' }}> Start Time </span>
+                    <input
+                      type="datetime-local"
+                      className="form-control"
+                      value={StartTime}
+                      onChange={(e) => setStartTime(e.target.value)}
+                      required
+                    />
+
+                    <span style={{ color: 'black', fontWeight: 'bold' }}>End Time</span>
+                    <input
+                      type="datetime-local"
+                      className="form-control"
+                      value={EndTime}
+                      onChange={(e) => setEndTime(e.target.value)}
+                      required
+                    />
+
+                  </div>
+                  <button type="submit" className="btn btn-success">
+                    <span style={{ color: 'white', fontWeight: 'bold' }}>
+                      ADD EVENT
+                    </span>
+                  </button>
+                </form>
+              </Modal.Body>
+              <Modal.Footer style={{ backgroundColor: 'gray' }}>
+                <Button variant="dark" onClick={handleCloseModal}>
+                  <span style={{ color: 'white', fontWeight: 'bold' }}>𝒞𝓁𝑜𝓈𝑒</span>
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          </>
         </div>
 
+        {/* // Inside your component's render or return statement */}
         <section style={{ backgroundColor: 'white' }}>
           <div style={{ position: "relative", zIndex: 0 }}>
             <FullCalendar
@@ -336,34 +496,35 @@ export default function (props) {
                 eventColor: '#378006',
               }}
               height="80vh"
-              eventBackgroundColor="green"
               eventDidMount={(info) => {
                 return new bootstrap.Popover(info.el, {
                   title: info.event.title,
                   placement: "auto",
                   trigger: "hover",
                   customClass: "PopoverStyle",
-                  content: " ",
+                  content: `
+                    <strong>Title:</strong> ${info.event.title}<br>
+                    <strong>Room Name:</strong> ${info.event.extendedProps.roomName}<br>
+                    <strong>Username:</strong> ${info.event.extendedProps.username}
+                  `,
                   html: true,
                 });
               }}
+
+              eventClassNames={(info) => {
+                return info.event.extendedProps.colorClass;
+              }}
             />
-
-
-
           </div>
-
         </section>
 
         <div className='row'>
           <div className='mt-5 mb-4'>
-
             <h2 className='text-center'>🆈🅾🆄🆁 🅴🆅🅴🅽🆃🆂</h2>
-
-
           </div>
         </div>
 
+        {/* User Data Table View  */}
         <div className='row'>
           <div className='table-responsive'>
             <table className='table table-striped table-hover table-bordered'>
@@ -393,9 +554,9 @@ export default function (props) {
                         <span className="clock-animation">🕒</span>
                       </td>
                       <td style={{ minWidth: 190 }}>
-                        <Button size='sm' varient='primary' style={{ backgroundColor: 'Green' }} onClick={() => { handleViewShow(setRowData(item)) }}>View</Button>|
-                        <Button size='sm' varient='warning' className='text-black' style={{ backgroundColor: 'yellow' }} onClick={() => { handleEditShow(setRowData(item), setId(item._id)) }}>Edit</Button>|
-                        <Button size='sm' varient='danger' style={{ backgroundColor: 'Red' }} onClick={() => { handleViewShow(setRowData(item), setId(item._id), setDelete(true)) }}>Delete</Button>
+                        {/* <Button size='sm' varient='primary' style={{ backgroundColor: 'Green' }} onClick={() => { handleViewShow(setRowData(item)) }}>View</Button>|
+                        <Button size='sm' varient='warning' className='text-black' style={{ backgroundColor: 'yellow' }} onClick={() => { handleEditShow(setRowData(item), setId(item._id)) }}>Edit</Button>| */}
+                        <Button size='sm' varient='danger' style={{ backgroundColor: 'Red' }} onClick={() => { handleViewShow(setRowData(item), setId(item._id), setDelete(true)) }}>𝘾𝙖𝙣𝙘𝙚𝙡 𝙈𝙚𝙚𝙩𝙞𝙣𝙜</Button>
                       </td>
                     </tr>
 
@@ -404,7 +565,6 @@ export default function (props) {
             </table>
           </div>
         </div>
-
 
         {/* create modal for view data */}
         <div className='model-box-view'>

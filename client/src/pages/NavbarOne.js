@@ -48,10 +48,9 @@ function NavbarOne() {
             <NavLink
               to="/Calendar"
               activeClassName="font-bold"
-              className="my-1 text-gray-100 md:mx-4 md:my-0 hover:text-gray-300 text-black"
+              className="my-1 text-gray-100 md:mx-4 md:my-0 hover:text-gray-300 text-black calendarIcon-img"
               onClick={() => setShowMenu(false)}
             >
-              📅
             </NavLink>
 
             <NavLink

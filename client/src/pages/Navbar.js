@@ -36,8 +36,9 @@ function Navbar() {
         </div>
 
         {/* <div className="text-right">
-          <p className="date-time text-black text-size-10">{date}</p>
+          <p className="date-time text-black text-size-10 ">{date}</p>
         </div> */}
+        
 
         <div className={`md:flex md:items-center ${showMenu ? "block" : "hidden"}`}>
           <div className="flex flex-col md:flex-row md:mx-6">

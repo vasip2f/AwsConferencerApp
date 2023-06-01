@@ -2,10 +2,14 @@ import React from 'react'
 
 function Success() {
   return (
-    <div>Success ,
-      <h1 className='text-blue  font-xl ' >Yes we made it</h1>
+    <div>
+      <h1 className='text-blue  font-xl ' >Welcome Super User</h1>
     </div>
   )
 }
 
 export default Success
+
+
+
+

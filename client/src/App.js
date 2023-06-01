@@ -10,6 +10,8 @@ import Dashboard from "./component/Dashboard";
 import Calendar from "./component/Calendar";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import AuthPage from "./pages/AuthPage";
+import SuperUserDashboard from "./SuperUser/SuperUserDashboard";
 
 Modal.setAppElement('#root');
 
@@ -19,6 +21,7 @@ function App() {
       <ToastContainer />
 
       <Routes>
+      <Route path="/authpage" element={<AuthPage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<PrivateRoute />}>
@@ -26,6 +29,8 @@ function App() {
           <Route path="/success" element={<Success />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/calendar" element={<Calendar />} />
+          <Route path="/superuserdashboard" element={<SuperUserDashboard />} />
+         
 
 
         </Route>

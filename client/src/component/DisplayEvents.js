@@ -1,377 +1,456 @@
-import React, { useRef, useState, useEffect } from 'react';
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPligin from '@fullcalendar/timegrid';
-import InteractionPlugin from "@fullcalendar/interaction";
-import ListPlugin from "@fullcalendar/list";
-import Datetime from 'react-datetime';
-import Popup from 'reactjs-popup';
-import { Button, Modal } from 'react-bootstrap';
+// import React, { useRef, useState, useEffect } from 'react';
+// import axios from 'axios';
+// import "bootstrap/dist/css/bootstrap.min.css";
+// import '../index.css';
+// import '../App.css';
+// import Backendapi from '../Backendapi';
+
+
+// export default function () {
+
+//     const [eventData, setEventData] = useState([]); // store the Display data
+
+//     //this api Display Event 
+
+//     useEffect(() => {
+//         axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/get-events`)
+//             .then((d) => {
+//                 setEventData(d.data)
+//                 console.log(d.data)
+
+//             })
+//             .catch((e) => { console.log(e) })
+
+//     }, [])
+
+//     return (
+
+//         <div >
+//             <div className='row'>
+//                 <div className='mt-5 mb-4'>
+//                     <h2>𝕭𝖔𝖔𝖐𝖊𝖉 𝕰𝖛𝖊𝖓𝖙𝖘</h2>
+//                 </div>
+//             </div>
+
+//             <div className='row'>
+//                 <div className='table-responsive'>
+//                     <table className='table table-striped table-hover table-bordered'>
+//                         <thead className='bg-warning text-white'>
+//                             <tr>
+//                                 <th>Title</th>
+//                                 <th>Room Name</th>
+//                                 <th>StartTime</th>
+//                                 <th>EndTime</th>
+//                                 <th>Event Booked by</th>
+
+//                             </tr>
+//                         </thead>
+//                         <tbody >
+//                             {eventData.map((item) =>
+
+//                                 <tr key={item._id}>
+//                                     <td >{item.title}</td>
+//                                     <td>{item.roomName}</td>
+//                                     <td>
+//                                         {item.StartTime.split('T').join(' ⋆ ').slice(0, -5)}
+
+//                                         <span className="clock-animation">🕒</span>
+//                                     </td>
+//                                     <td>
+//                                         {item.EndTime.split('T').join(' ⋆ ').slice(0, -5)}
+
+//                                         <span className="clock-animation">🕒</span>
+//                                     </td>
+//                                     <td>{item.username}</td>
+//                                 </tr>
+//                             )}
+
+//                         </tbody>
+//                     </table>
+
+//                 </div>
+//             </div>
+
+
+//         </div>
+
+//     )
+// }
+
+// second code
+
+// import React, { useState, useEffect } from 'react';
+// import axios from 'axios';
+// import "bootstrap/dist/css/bootstrap.min.css";
+// import '../index.css';
+// import '../App.css';
+// import Backendapi from '../Backendapi';
+
+// export default function DisplayEvent() {
+//   const [eventData, setEventData] = useState([]);
+
+//   useEffect(() => {
+//     axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/get-events`)
+//       .then((res) => {
+//         setEventData(res.data);
+//         console.log(res.data);
+//       })
+//       .catch((error) => {
+//         console.log(error);
+//       });
+//   }, []);
+
+//   const handleAccept = (eventId) => {
+//     updateEventStatus(eventId, 'accept');
+//   };
+
+//   const handleReject = (eventId) => {
+//     updateEventStatus(eventId, 'reject');
+//   };
+
+//   const updateEventStatus = (eventId, status) => {
+//     axios.put(`${Backendapi.REACT_APP_BACKEND_API_URL}/update-event/${eventId}`, { status })
+//       .then((res) => {
+//         setEventData(prevData => {
+//           const updatedData = prevData.map(item => {
+//             if (item._id === eventId) {
+//               return { ...item, status };
+//             }
+//             return item;
+//           });
+//           return updatedData;
+//         });
+//         console.log(res.data);
+//       })
+//       .catch((error) => {
+//         console.log(error);
+//       });
+//   };
+
+//   const renderActions = (item) => {
+//     if (localStorage.getItem('isSuperUser') === 'true') {
+//       return (
+//         <td>
+//           {item.status === 'initiated' && (
+//             <>
+//               <button
+//                 className="btn btn-success"
+//                 onClick={() => handleAccept(item._id)}
+//               >
+//                 Accept
+//               </button>
+//               <button
+//                 className="btn btn-danger"
+//                 onClick={() => handleReject(item._id)}
+//               >
+//                 Reject
+//               </button>
+//             </>
+//           )}
+//         </td>
+//       );
+//     } else {
+//       return <td></td>;
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <div className="row">
+//         <div className="mt-5 mb-4">
+//           <h2>𝕭𝖔𝖔𝖐𝖊𝖉 𝕰𝖛𝖊𝖓𝖙𝖘</h2>
+//         </div>
+//       </div>
+
+//       <div className="row">
+//         <div className="table-responsive">
+//           <table className="table table-striped table-hover table-bordered">
+//             <thead className="bg-warning text-white">
+//               <tr>
+//                 <th>Title</th>
+//                 <th>Room Name</th>
+//                 <th>StartTime</th>
+//                 <th>EndTime</th>
+//                 <th>Event Booked by</th>
+//                 <th>Status</th>
+//                 {localStorage.getItem('isSuperUser') === 'true' && (
+//                   <th>Actions</th>
+//                 )}
+//               </tr>
+//             </thead>
+//             <tbody>
+//               {eventData.map((item) => (
+//                 <tr key={item._id}>
+//                   <td>{item.title}</td>
+//                   <td>{item.roomName}</td>
+//                   <td>
+//                     {item.StartTime.split('T').join(' ⋆ ').slice(0, -5)}
+//                     <span className="clock-animation">🕒</span>
+//                   </td>
+//                   <td>
+//                     {item.EndTime.split('T').join(' ⋆ ').slice(0, -5)}
+//                     <span className="clock-animation">🕒</span>
+//                   </td>
+//                   <td>{item.username}</td>
+//                   <td>{item.status}</td>
+//                   {renderActions(item)}
+//                 </tr>
+//               ))}
+//             </tbody>
+//           </table>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+//third code
+
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import *as bootstrap from "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import '../index.css';
 import '../App.css';
 import Backendapi from '../Backendapi';
+import { toast } from 'react-toastify';
+
+export default function DisplayEvent() {
+  const [eventData, setEventData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [eventsPerPage] = useState(10);
+  const [searchTitle, setSearchTitle] = useState('');
+  const [searchBookedBy, setSearchBookedBy] = useState('');
+  const [searchStatus, setSearchStatus] = useState('');
+  const [username, setuserName] = useState(JSON.parse(localStorage.getItem("username")));
+  console.log(username)
+
+  // const [Emailusername, setEmailusername] = useState(localStorage.getItem("email"));
+  console.log(localStorage.getItem("email"))
+  let eventId;
+  // let username;
+  let title;
+
+  useEffect(() => {
+    axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/get-events`)
+      .then((res) => {
+        setEventData(res.data);
+        //  const eventId =  console.log(res.data);
+        //  const myString = eventId.replace(/^"(.*)"$/, '$1');
+        console.log(res.data[0].User.email)
+        console.log(res.data[0]._id)
+        eventId = res.data[0]._id
+        console.log(eventId)
 
 
+        //  console.log(res.data[0].username)
+        //  username = res.data[0].username
+        //  console.log(username)
 
+        //  console.log(res.data[0].title)
+        //  title = res.data[0].title
+        //  console.log(title)
 
-export default function () {
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
-    const [username, setuserName] = useState("");
-    const [title, setTitle] = useState("");
-    const [roomName, setroomName] = useState("");
-    const [StartTime, setStartTime] = useState(Date());
-    const [EndTime, setEndTime] = useState(Date());
-    const [availability, setAvailability] = useState(true);
-    const [Data, setData] = useState([]); // store the post data
-    const [eventData, setEventData] = useState([]); // store the Display data
+  const handleAccept = async (eventId, username, title, email) => {
+    await axios.put(`${Backendapi.REACT_APP_BACKEND_API_URL}/accept-event/${eventId}`)
+    await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/send/acceptmail/${username}/${email}/${title}`)
+      .then((res) => {
+        setEventData(prevData => {
+          const updatedData = prevData.map(item => {
+            if (item._id === eventId) {
+              return { ...item, status: '𝐂𝐨𝐧𝐟𝐢𝐫𝐦𝐞𝐝' };
+            }
+            return item;
+          });
+          return updatedData;
+        });
+        console.log(res.data);
+      })
 
-    const [RowData, setRowData] = useState([]);
-    const [ViewShow, setViewShow] = useState(false);
-    const handleViewShow = () => { setViewShow(true) }
-    const handleViewClose = () => { setViewShow(false) }
+      .catch((error) => {
+        console.log(error);
+      });
 
-    // For Edit Modal*****
-    const [ViewEdit, setEditShow] = useState(false);
-    const handleEditShow = () => { setEditShow(true) }
-    const handleEditClose = () => { setEditShow(false) }
+    toast.success("Event is Confirmed 😊", {
+      position: toast.POSITION.TOP_RIGHT,
+      autoClose: 2000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+    });
+    window.location.reload();
+    toast.success("Accept Mail has been sent")
+  };
 
-    // For delete Modal*****
-    const [ViewDelete, setDeleteShow] = useState(false);
-    const handleDeletShow = () => { setDeleteShow(true) }
-    const handleDeleteClose = () => { setDeleteShow(false) }
+  const handleReject = async (eventId, username, title, email) => {
+    console.log(email)
+    await axios.put(`${Backendapi.REACT_APP_BACKEND_API_URL}/reject-event/${eventId}`)
+    await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/send/rejectmail/${username}/${email}/${title}`)
+      .then((res) => {
+        setEventData(prevData => {
+          const updatedData = prevData.map(item => {
+            if (item._id === eventId) {
+              return { ...item, status: '𝐑𝐞𝐣𝐞𝐜𝐭𝐞𝐝' };
+            }
+            return item;
+          });
+          return updatedData;
+        });
+        console.log(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    toast.success("Event is Rejected", {
+      position: toast.POSITION.TOP_RIGHT,
+      autoClose: 2000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+    });
+    window.location.reload();
+    toast.success("Reject Mail has been sent")
+  };
 
-    // For Add new data Modal*****
-    const [ViewPost, setPostShow] = useState(false);
-    const handlePostShow = () => { setPostShow(true) }
-    const handlePostClose = () => { setPostShow(false) }
+  const renderActions = (item) => {
 
-    const [Delete, setDelete] = useState(false);
-    //id for update record and delete
-    const [id, setId] = useState("");
-
-    const handleclick = async (event) => {
-        event.preventDefault();
-        const payload = {
-            username: username,
-            title: title,
-            roomName: roomName,
-            StartTime: StartTime,
-            EndTime: EndTime,
-            availability: availability
-        }
-        const config = { headers: { "Content-Type": "Application/json" } }
-        await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/create-event`, payload, config)
-            .then(() => { alert("Event is Confirmed") })
-            .catch((e) => { alert("The slot is already booked") })
-            // window.location.reload()
-            .then(() => { console.log("added data from axios") })
-            .catch((e) => { alert("the slot is already booked") })
-
+    console.log(item.User.email)
+    if (localStorage.getItem('isSuperUser') === 'true') {
+      return (
+        <td>
+          {item.status === '𝐈𝐧𝐢𝐭𝐢𝐚𝐭𝐞𝐝' && (
+            <>
+              <button
+                className="btn btn-success"
+                onClick={() => handleAccept(item._id, item.User.username, item.title, item.User.email)}
+              >
+                Accept
+              </button>
+              <button
+                className="btn btn-danger"
+                onClick={() => handleReject(item._id, item.User.username, item.title, item.User.email)}
+              >
+                Reject
+              </button>
+            </>
+          )}
+        </td>
+      );
+    } else {
+      return <td></td>;
     }
+  };
 
 
-    useEffect(() => {
-        axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/get-events`)
-            .then((d) => {
-                const cdata = d.data.map(item => {
-                    return { username: item.username, title: item.title, date: item.StartTime }
-                })
-                setData(cdata)
-            })
-            .catch((e) => { console.log(e) })
+  const indexOfLastEvent = currentPage * eventsPerPage;
+  const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
 
-    }, [])
-
-    console.log(Data)
-
-
-
-    //this api Display Event 
-
-    useEffect(() => {
-        axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/get-events`)
-            .then((d) => {
-                setEventData(d.data)
-                const startTime = d.data[0].StartTime;
-                const endTime = d.data[0].EndTime;
-
-                // const formattedStartTime = startTime.split('T').join(' ');
-                // const formattedEndTime = endTime.split('T').join(' ');
-
-            })
-            .catch((e) => { console.log(e) })
-
-    }, [])
-
-
-    //Update the Event
-    const handleEdit = () => {
-        const Credentials = { title, roomName, StartTime, EndTime, availability }
-        axios.put(`${Backendapi.REACT_APP_BACKEND_API_URL}/update-event/${id}`, Credentials)
-            .then((d) => {
-                setData(d.data)
-            })
-            .catch((e) => { console.log(e) })
-        window.location.reload();
-
-    }
-
-    //handle delete function
-
-    const handleDelete = () => {
-
-        axios.delete(`${Backendapi.REACT_APP_BACKEND_API_URL}/delete-event/${id}`)
-            .then((d) => {
-                setData(d.data)
-            })
-            .catch((e) => { console.log(e) })
-        window.location.reload();
-
-    }
-
-
+  const filteredEvents = eventData.filter((item) => {
     return (
+      item.title.toLowerCase().includes(searchTitle.toLowerCase()) &&
+      item.username.toLowerCase().includes(searchBookedBy.toLowerCase()) &&
+      item.status.toLowerCase().includes(searchStatus.toLowerCase())
+    );
+  });
 
-        <div >
+  const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
 
+  const pageNumbers = Math.ceil(filteredEvents.length / eventsPerPage);
 
-            <div className='row'>
-                <div className='mt-5 mb-4'>
-
-                    <h2>𝕭𝖔𝖔𝖐𝖊𝖉 𝕰𝖛𝖊𝖓𝖙𝖘</h2>
-
-                    {/* <Button varient='primary' onClick={() => { handlePostShow() }} ><i className='fa fa-plu'></i>Add New event</Button> */}
-
-                    {/* <Button varient='primary'  onClick={() => { handlePostShow() }} ><i className='fa fa-plu'></i>Add New event</Button> */}
-
-                </div>
-            </div>
-
-            <div className='row'>
-                <div className='table-responsive'>
-                    <table className='table table-striped table-hover table-bordered'>
-                        <thead className='bg-warning text-white'>
-                            <tr>
-                                <th>Title</th>
-                                <th>Room Name</th>
-                                <th>StartTime</th>
-                                <th>EndTime</th>
-                                <th>Event Booked by</th>
-
-                            </tr>
-                        </thead>
-                        {/* <tbody>
-                            {
-                                eventData.map((item) =>
-                                    <tr key={item._id}>
-                                        <td>{item.title}</td>
-                                        <td>{item.roomName}</td>
-
-                                        <td>{item.StartTime.split('T').join(' ').slice(0, -5)}
-                                        <td className="clock-animation">🕒</td>
-                                        </td>
-                                        <td>{item.EndTime.split('T').join(' ').slice(0, -5)}
-                                        <td className="clock-animation">🕒</td>
-                                        </td>
-                                        
-                                        <td>{item.username}</td>
-                                    </tr>
-                                )}
-                        </tbody> */}
-                        
-                        <tbody >
-                            {eventData.map((item) =>
-                                <tr key={item._id}>
-                                    <td >{item.title}</td>
-                                    <td>{item.roomName}</td>
-                                    <td>
-                                        {item.StartTime.split('T').join(' ⋆ ').slice(0, -5)}
-                                       
-                                        <span className="clock-animation">🕒</span>
-                                    </td>
-                                    <td>
-                                        {item.EndTime.split('T').join(' ⋆ ').slice(0, -5)}
-                                        
-                                        <span className="clock-animation">🕒</span>
-                                    </td>
-                                    <td>{item.username}</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
 
-            {/* create modal for view data */}
-            <div className='model-box-view'>
-                <Modal
-                    show={ViewShow}
-                    onHide={handleViewClose}
-                    backdrop="static"
-                    keyboard={false}
-                >
-                    <Modal.Header closeButton>
-                        <Modal.Title>Event Detail</Modal.Title>
-
-                    </Modal.Header>
-                    <Modal.Body>
-                        <div>
-                            <div>
-                                <div className='form-group'>
-                                    <input type='text' className='form-control' required value={RowData.title} readOnly />
-                                </div>
-                            </div>
-                            <div>
-                                <div className='form-group mt-3'>
-                                    <input type='text' className='form-control' required value={RowData.roomName} readOnly />
-                                </div>
-                            </div>
-                            <div>
-                                <div className='form-group mt-3'>
-                                    <input type='text' className='form-control' required value={RowData.StartTime} readOnly />
-                                </div>
-                            </div>
-                            <div>
-                                <div className='form-group mt-3'>
-                                    <input type='text' className='form-control' required value={RowData.EndTime} readOnly />
-                                </div>
-                            </div>
-
-
-
-                        </div>
-                        {
-                            Delete && (
-                                <Button type='submit' className='btn btn-danger mt-4' onClick={handleDelete}>Confirm Again</Button>
-                            )
-                        }
-
-
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant='secondary' onClick={handleViewClose}>Close</Button>
-                    </Modal.Footer>
-
-                </Modal>
-            </div>
-
-            {/* modal for Submit data to database */}
-
-            <div className='model-box-view'>
-                <Modal
-                    show={ViewPost}
-                    onHide={handlePostClose}
-                    backdrop="static"
-                    keyboard={false}
-                >
-                    <Modal.Header closeButton>
-                        <Modal.Title>Book Your Conference Meeting</Modal.Title>
-
-                    </Modal.Header>
-                    <Modal.Body>
-                        <div>
-                            <div className='form-group'>
-                                <input type='text' className='form-control' required value={title} onChange={(e) => setTitle(e.target.value)} placeholder='Please Enter your Title' />
-                            </div>
-
-                            <div>
-                                <div className='form-group mt-3'>
-                                    <label style={{ color: "blue" }}>Select your Room</label>
-                                    <select placeholder="Select Room" value={roomName} required onChange={e => setroomName(e.target.value)}>
-                                        <option>  </option>
-                                        <option>RoomOne</option>
-                                        <option>RoomTwo</option>
-                                        <option>RoomThree</option>
-                                        <option>RoomFour</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div>
-                                <div className='form-group mt-3'>
-                                    <label style={{ color: "blue" }}>StartTime</label>
-                                    <Datetime value={StartTime} required onChange={date => setStartTime(date)} />
-                                    {/* <Datetime type='text' className='form-control' value={StartTime} onChange={Datetime => setStartTime(Datetime)} placeholder='Event Start Time' /> */}
-                                </div>
-                            </div>
-                            <div>
-                                <div className='form-group mt-3'>
-                                    <label style={{ color: "blue" }}>EndTime</label>
-                                    <Datetime value={EndTime} required onChange={date => setEndTime(date)} />
-                                    {/* <Datetime type='text' className='form-control' value={EndTime} onChange={Datetime => setEndTime(Datetime)} placeholder='Event End Time' /> */}
-                                </div>
-                            </div>
-
-                            <Button type='submit' className='btn btn-success mt-4' onClick={handleclick}>Add new Event</Button>
-                            {/* <Button type='submit' className='btn btn-success mt-4' onClick={handleSubmit}>Add new Event</Button> */}
-
-                        </div>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant='secondary' onClick={handlePostClose}>Close</Button>
-                    </Modal.Footer>
-
-                </Modal>
-            </div>
-
-            {/* modal for Edit data to database */}
-
-            <div className='model-box-view'>
-                <Modal
-                    show={ViewEdit}
-                    onHide={handleEditClose}
-                    backdrop="static"
-                    keyboard={false}
-                >
-                    <Modal.Header closeButton>
-                        <Modal.Title>Book Your Conference Meeting</Modal.Title>
-
-                    </Modal.Header>
-                    <Modal.Body>
-                        <div>
-                            <div className='form-group'>
-                                <lable>Title</lable>
-                                <input type='text' className='form-control' required='Enter your Title' value={title} onChange={(e) => setTitle(e.target.value)} placeholder='Please Enter your Title' defaultValue={RowData.title} />
-                            </div>
-
-                            <div>
-                                <div className='form-group mt-3'>
-                                    <label style={{ color: "blue" }}>Select your Room</label>
-                                    <select placeholder="Select Room" required='please Select a room' value={roomName} required onChange={e => setroomName(e.target.value)} defaultValue={RowData.roomName}>
-                                        <option>  </option>
-                                        <option>Big Room</option>
-                                        <option>Small Room</option>
-                                        <option>Booth One</option>
-                                        <option>Booth Two</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div>
-                                <div className='form-group mt-3'>
-                                    <label style={{ color: "blue" }}>StartTime</label>
-                                    <Datetime type='text' required="start time is missing" className='form-control' value={StartTime} onChange={(e) => setStartTime(e)} placeholder='Event Start Time' defaultValue={RowData.StartTime} />
-                                </div>
-                            </div>
-                            <div>
-                                <div className='form-group mt-3'>
-                                    <label style={{ color: "blue" }}>EndTime</label>
-                                    <Datetime type='text' required="end time is missing" className='form-control' value={EndTime} onChange={(e) => setEndTime(e)} placeholder='Event End Time' defaultValue={RowData.EndTime} />
-                                </div>
-                            </div>
-                            <Button type='submit' className='btn btn-warning mt-4' onClick={handleEdit}>Update</Button>
-                        </div>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant='secondary' onClick={handleEditClose}>Close</Button>
-                    </Modal.Footer>
-
-                </Modal>
-            </div>
-
+  return (
+    <div>
+      <div className="row">
+        <div className="mt-5 mb-4">
+          <h2>𝕭𝖔𝖔𝖐𝖊𝖉 𝕰𝖛𝖊𝖓𝖙𝖘</h2>
         </div>
+      </div>
 
-    )
+      <div className="row">
+        <div className="table-responsive">
+          <table className="table table-striped table-hover table-bordered">
+            <thead className="bg-warning text-white">
+              <tr>
+                <th className='text-black'>Title
+                  <input
+                    type="text"
+                    value={searchTitle}
+                    onChange={(e) => setSearchTitle(e.target.value)}
+                    placeholder="Search Title"
+                    style={{ width: '100px', height: '22px', padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }}
+                  />
+                </th>
+                <th className='text-black'>Room Name</th>
+                <th className='text-black'>StartTime</th>
+                <th className='text-black'>EndTime</th>
+                <th className='text-black'>Event BookedBy
+                  <input
+                    type="text"
+                    value={searchBookedBy}
+                    onChange={(e) => setSearchBookedBy(e.target.value)}
+                    placeholder="Search Name"
+                    style={{ width: '110px', height: '22px', padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }}
+                  />
+                </th>
+                <th className='text-black'>Status</th>
+                {localStorage.getItem('isSuperUser') === 'true' && (
+                  <th className='text-black'>Actions</th>
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {currentEvents.map((item) => (
+                <tr key={item._id}>
+                  <td>{item.title}</td>
+                  <td>{item.roomName}</td>
+                  <td>
+                    {item.StartTime.split('T').join(' ⋆ ').slice(0, -5)}
+                    <span className="clock-animation">🕒</span>
+                  </td>
+                  <td>
+                    {item.EndTime.split('T').join(' ⋆ ').slice(0, -5)}
+                    <span className="clock-animation">🕒</span>
+                  </td>
+                  <td>{item.User.username}</td>
+                  <td>{item.status}</td>
+                  {renderActions(item)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="pagination">
+        {Array.from({ length: pageNumbers }, (_, index) => index + 1).map((number) => (
+          <button
+            key={number}
+            className={`btn ${currentPage === number ? 'btn-primary' : 'btn-light'}`}
+            onClick={() => paginate(number)}
+          >
+            {number}
+          </button>
+        ))}
+      </div>
+
+    </div>
+  );
 }
+
+
+
+
+
+
