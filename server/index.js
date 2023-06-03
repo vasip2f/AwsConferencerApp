@@ -21,6 +21,7 @@ const EventTimeSlotRoute = require('./router/EventTimeSlotRoute');
 const EventRoute = require('./router/EventRoutes');
 const SuperUserRoute = require("./router/SuperUserRoute");
 
+
 InitiateMongoServer();
 // middleware
 app.use(bodyParser.json());
@@ -28,16 +29,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/', cors(corsOptions), EventRoute);
 app.use('/', EventTimeSlotRoute);
-app.use('/',SuperUserRoute)
-
-app.get("/", (req, res) => {
-  res.json({ message: "API Working" });
-});
-app.use('/', sendEmail)
-// router
-
-app.use("/user", userRouter );
-
+app.use('/',SuperUserRoute);
 
 
 const _dirname = path.dirname("")
@@ -54,6 +46,18 @@ app.get("/*", function (req, res) {
     }
   );
 })
+
+app.get("/", (req, res) => {
+  res.json({ message: "API Working" });
+});
+app.use('/', sendEmail)
+// router
+
+app.use("/user", userRouter );
+
+
+
+
 
 
 

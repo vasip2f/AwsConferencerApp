@@ -21,7 +21,7 @@ function App() {
       <ToastContainer />
 
       <Routes>
-      <Route path="/authpage" element={<AuthPage />} />
+        <Route path="/authpage" element={<AuthPage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<PrivateRoute />}>
@@ -30,7 +30,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/superuserdashboard" element={<SuperUserDashboard />} />
-         
+
 
 
         </Route>

@@ -174,6 +174,11 @@ function Login() {
         return () => clearInterval(interval);
     }, []);
 
+    // Function to set the superuser email dynamically
+    const setSuperUserEmail = (email) => {
+        Backendapi.REACT_APP_SuperUser_EMAIL = email;
+    };
+
     function handleSubmit(event) {
         event.preventDefault();
         const data = {
@@ -201,11 +206,16 @@ function Login() {
 
                 console.log(res);
                 localStorage.setItem("token", JSON.stringify(res.data.token));
-                localStorage.setItem("username",JSON.stringify(res.data.user.username));
+                localStorage.setItem("username", JSON.stringify(res.data.user.username));
                 localStorage.setItem('objectId', JSON.stringify(res.data.user['_id']));
                 localStorage.setItem('isSuperUser', JSON.stringify(res.data.user.isSuperUser));
-                    console.log(res.data.user.username)
+
+                console.log(res.data.user.username)
+
                 if (res.data.user.isSuperUser) {
+                    // Set the superuser email dynamically
+                    setSuperUserEmail(res.data.user.email);
+                    console.log(res.data.user.email)
                     navigate("/dashboard");
                 } else {
                     navigate("/Calendar");
@@ -237,7 +247,7 @@ function Login() {
                                 type="text"
                                 required="Please enter Your Email"
                                 placeholder="Enter Your Email"
-                                className=" border border-zinc-400 outline-none  px-6 py-2 text-black "
+                                className=" border border-zinc-400 outline-none  px-6 py-1 text-black "
                             />
                         </div>
                         <div className="flex">
@@ -248,7 +258,7 @@ function Login() {
                                     type={showPassword ? "text" : "password"}
                                     required="Please enter Your Password"
                                     placeholder="Enter Your Password"
-                                    className="border border-zinc-400 outline-none px-6 py-2 text-black"
+                                    className="border border-zinc-400 outline-none px-6 py-1 text-black"
                                 />
                                 <button
                                     type="button"
@@ -268,15 +278,16 @@ function Login() {
                                 Login
                             </button>
                         </div>
-
                         <div className="text-center">
                             <p>
                                 𝕯𝖔𝖓'𝖙 𝖍𝖆𝖛𝖊 𝖆𝖓 𝖆𝖈𝖈𝖔𝖚𝖓𝖙?{" "}
-                                <Link to="/register" className="text-blue-500">
+                                <Link to="/register" className="text-Darkblue">
                                     Register
                                 </Link>
                             </p>
                         </div>
+
+
                     </form>
 
 

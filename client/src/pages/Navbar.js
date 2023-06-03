@@ -19,7 +19,9 @@ function Navbar() {
       <div className="container mx-auto px-6 py-3 md:flex md:justify-between md:items-center">
         <div className="flex items-center justify-between">
           {/* <Link className="text-black text-xl font-semibold">𝕮𝖔𝖓𝖋𝖊𝖗𝖊𝖓𝖈𝖊 𝕽𝖔𝖔𝖒  𝕭𝖔𝖔𝓚𝖎𝖓𝖌</Link> */}
-          <span className="text-black text-center text-2xl font-bold tracking-wider">𝕮𝖔𝖓𝖋𝖊𝖗𝖊𝖓𝖈𝖊 𝕽𝖔𝖔𝖒  𝕭𝖔𝖔𝓚𝖎𝖓𝖌</span>
+          {/* <span className="text-black text-center text-3xl font-bold tracking-wider">Conference Room Book</span> */}
+          <span class="text-black text-center text-2xl font-bold tracking-wider">𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦 𝐁𝐨𝐨𝐤</span>
+
           <button
             className="md:hidden rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
             onClick={() => setShowMenu(!showMenu)}
@@ -41,7 +43,7 @@ function Navbar() {
         
 
         <div className={`md:flex md:items-center ${showMenu ? "block" : "hidden"}`}>
-          <div className="flex flex-col md:flex-row md:mx-6">
+          {/* <div className="flex flex-col md:flex-row md:mx-6">
             <NavLink
               to="/login"
               activeClassName="font-bold"
@@ -58,7 +60,7 @@ function Navbar() {
             >
               𝕽𝖊𝖌𝖎𝖘𝖙𝖊𝖗
             </NavLink>
-          </div>
+          </div> */}
         </div>
       </div>
     </nav>

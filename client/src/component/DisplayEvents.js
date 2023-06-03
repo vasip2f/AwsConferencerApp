@@ -231,26 +231,83 @@ export default function DisplayEvent() {
   // let username;
   let title;
 
+  // useEffect(() => {
+  //   axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/get-events`)
+  //     .then((res) => {
+  //       setEventData(res.data);
+  //       //  const eventId =  console.log(res.data);
+  //       //  const myString = eventId.replace(/^"(.*)"$/, '$1');
+  //       console.log(res.data[0].User.email)
+  //       console.log(res.data[0]._id)
+  //       eventId = res.data[0]._id
+  //       console.log(eventId)
+  //       //  console.log(res.data[0].username)
+  //       //  username = res.data[0].username
+  //       //  console.log(username)
+  //       //  console.log(res.data[0].title)
+  //       //  title = res.data[0].title
+  //       //  console.log(title)
+
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }, []);
+
+
+
+
+  //secon code
+
+
+  // useEffect(() => {
+  //   axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/get-events`)
+  //     .then((res) => {
+  //       const sortedData = res.data.sort((a, b) => {
+  //         const aStartTime = new Date(a.StartTime).getTime();
+  //         const bStartTime = new Date(b.StartTime).getTime();
+  //         const currentSystemTime = new Date().getTime();
+  //         const aTimeDiff = Math.abs(aStartTime - currentSystemTime);
+  //         const bTimeDiff = Math.abs(bStartTime - currentSystemTime);
+  //         return aTimeDiff - bTimeDiff;
+  //       });
+  //       setEventData(sortedData);
+  //       eventId = sortedData[0]._id;
+  //       console.log(eventId);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }, []);
+
+
+
+
+  //third code
   useEffect(() => {
     axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/get-events`)
       .then((res) => {
-        setEventData(res.data);
-        //  const eventId =  console.log(res.data);
-        //  const myString = eventId.replace(/^"(.*)"$/, '$1');
-        console.log(res.data[0].User.email)
-        console.log(res.data[0]._id)
-        eventId = res.data[0]._id
-        console.log(eventId)
+        const sortedData = res.data.sort((a, b) => {
+          const aStartTime = new Date(a.StartTime).getTime();
+          const aEndTime = new Date(a.EndTime).getTime();
+          const bStartTime = new Date(b.StartTime).getTime();
+          const bEndTime = new Date(b.EndTime).getTime();
+          const currentSystemTime = new Date().getTime();
 
+          if (aEndTime < currentSystemTime && bEndTime < currentSystemTime) {
+            return 0; // No change in order if both events are expired
+          } else if (aEndTime < currentSystemTime) {
+            return 1; // Move event A to the end
+          } else if (bEndTime < currentSystemTime) {
+            return -1; // Move event B to the end
+          } else {
+            const aTimeDiff = Math.abs(aStartTime - currentSystemTime);
+            const bTimeDiff = Math.abs(bStartTime - currentSystemTime);
+            return aTimeDiff - bTimeDiff;
+          }
+        });
 
-        //  console.log(res.data[0].username)
-        //  username = res.data[0].username
-        //  console.log(username)
-
-        //  console.log(res.data[0].title)
-        //  title = res.data[0].title
-        //  console.log(title)
-
+        setEventData(sortedData);
       })
       .catch((error) => {
         console.log(error);
@@ -258,6 +315,7 @@ export default function DisplayEvent() {
   }, []);
 
   const handleAccept = async (eventId, username, title, email) => {
+    console.log(username)
     await axios.put(`${Backendapi.REACT_APP_BACKEND_API_URL}/accept-event/${eventId}`)
     await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/send/acceptmail/${username}/${email}/${title}`)
       .then((res) => {
@@ -271,13 +329,14 @@ export default function DisplayEvent() {
           return updatedData;
         });
         console.log(res.data);
+
       })
 
       .catch((error) => {
         console.log(error);
       });
-
-    toast.success("Event is Confirmed 😊", {
+    window.location.reload();
+    toast.success("Event Confirmed 😊", {
       position: toast.POSITION.TOP_RIGHT,
       autoClose: 2000,
       hideProgressBar: true,
@@ -286,8 +345,9 @@ export default function DisplayEvent() {
       draggable: true,
       progress: undefined,
     });
-    window.location.reload();
+
     toast.success("Accept Mail has been sent")
+
   };
 
   const handleReject = async (eventId, username, title, email) => {
@@ -309,6 +369,7 @@ export default function DisplayEvent() {
       .catch((error) => {
         console.log(error);
       });
+    window.location.reload();
     toast.success("Event is Rejected", {
       position: toast.POSITION.TOP_RIGHT,
       autoClose: 2000,
@@ -318,8 +379,9 @@ export default function DisplayEvent() {
       draggable: true,
       progress: undefined,
     });
-    window.location.reload();
     toast.success("Reject Mail has been sent")
+
+
   };
 
   const renderActions = (item) => {
@@ -361,7 +423,16 @@ export default function DisplayEvent() {
       item.username.toLowerCase().includes(searchBookedBy.toLowerCase()) &&
       item.status.toLowerCase().includes(searchStatus.toLowerCase())
     );
+  })
+  .sort((a, b) => {
+    if (a.status === "𝐈𝐧𝐢𝐭𝐢𝐚𝐭𝐞𝐝" && b.status !== "𝐈𝐧𝐢𝐭𝐢𝐚𝐭𝐞𝐝") {
+      return -1; // Move event A with status "Initiated" to the beginning
+    } else if (a.status !== "𝐈𝐧𝐢𝐭𝐢𝐚𝐭𝐞𝐝" && b.status === "𝐈𝐧𝐢𝐭𝐢𝐚𝐭𝐞𝐝") {
+      return 1; // Move event B with status "Initiated" to the beginning
+    }
+    return 0; // No change in order for other events
   });
+  
 
   const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
 
@@ -369,12 +440,16 @@ export default function DisplayEvent() {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+console.log(currentEvents)
+currentEvents.map(item =>{
+  console.log(item.User)
+}) 
 
   return (
     <div>
       <div className="row">
         <div className="mt-5 mb-4">
-          <h2>𝕭𝖔𝖔𝖐𝖊𝖉 𝕰𝖛𝖊𝖓𝖙𝖘</h2>
+          <h2>𝐁𝐨𝐨𝐤𝐞𝐝 𝐄𝐯𝐞𝐧𝐭𝐬</h2>
         </div>
       </div>
 
@@ -411,23 +486,25 @@ export default function DisplayEvent() {
               </tr>
             </thead>
             <tbody>
-              {currentEvents.map((item) => (
+              {(currentEvents.length) !=0 ? currentEvents.map((item) => (
                 <tr key={item._id}>
                   <td>{item.title}</td>
                   <td>{item.roomName}</td>
                   <td>
                     {item.StartTime.split('T').join(' ⋆ ').slice(0, -5)}
-                    <span className="clock-animation">🕒</span>
+                    <span className="clock-animation"></span>
                   </td>
                   <td>
                     {item.EndTime.split('T').join(' ⋆ ').slice(0, -5)}
-                    <span className="clock-animation">🕒</span>
+                    <span className="clock-animation"></span>
                   </td>
                   <td>{item.User.username}</td>
                   <td>{item.status}</td>
                   {renderActions(item)}
                 </tr>
-              ))}
+
+              )) : "Loading..."
+            }
             </tbody>
           </table>
         </div>
@@ -448,6 +525,12 @@ export default function DisplayEvent() {
     </div>
   );
 }
+
+
+ 
+
+
+
 
 
 

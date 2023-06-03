@@ -27,12 +27,12 @@ import "../App.css"
 
 export default function (props) {
   // localStorage.getItem("email").split("@")[0]
-  const [username, setuserName] = useState(localStorage.getItem("username"));
+  const [username, setuserName] = useState(JSON.parse(localStorage.getItem("username")));
   console.log(username)
   const [Emailusername, setEmailusername] = useState(localStorage.getItem("email"));
   console.log(Emailusername)
   const [title, setTitle] = useState("");
-  const [roomName, setroomName] = useState("Big Room");
+  const [roomName, setroomName] = useState("");
   const [StartTime, setStartTime] = useState(new Date());
   const [EndTime, setEndTime] = useState(new Date());
   const [availability, setAvailability] = useState(true);
@@ -78,6 +78,8 @@ export default function (props) {
   //id for update record and delete
   const [id, setId] = useState("");
 
+  // Backendapi.REACT_APP_SuperUser_EMAIL = response.data.superuserEmail;
+
   //create a event
   const handleclick = async (event) => {
     event.preventDefault();
@@ -99,7 +101,7 @@ export default function (props) {
     }
 
     const payload = {
-      username:username,
+      username: username,
       title: title,
       roomName: roomName,
       StartTime: moment(StartTime).tz('Asia/Kolkata').format(),
@@ -158,6 +160,37 @@ export default function (props) {
   }, [])
 
 
+  const sortByStartTime = (a, b) => {
+    const startTimeA = new Date(a.StartTime);
+    const startTimeB = new Date(b.StartTime);
+    return startTimeA - startTimeB;
+  };
+  const sortByEndTime = (a, b) => {
+    const endTimeA = new Date(a.EndTime);
+    const endTimeB = new Date(b.EndTime);
+    return endTimeA - endTimeB;
+  };
+  const currentDate = new Date();
+
+  const activeEvents = eventData.filter((item) => new Date(item.EndTime) >= currentDate);
+  const expiredEvents = eventData.filter((item) => new Date(item.EndTime) < currentDate);
+
+  const sortedActiveEvents = activeEvents.sort((a, b) => {
+    if (a.status === "𝐈𝐧𝐢𝐭𝐢𝐚𝐭𝐞𝐝" && b.status !== "𝐈𝐧𝐢𝐭𝐢𝐚𝐭𝐞𝐝") {
+      return -1;
+    } else if (a.status !== "𝐈𝐧𝐢𝐭𝐢𝐚𝐭𝐞𝐝" && b.status === "𝐈𝐧𝐢𝐭𝐢𝐚𝐭𝐞𝐝") {
+      return 1;
+    } else {
+      return sortByStartTime(a, b);
+    }
+  });
+
+  const sortedExpiredEvents = expiredEvents.sort(sortByEndTime);
+
+  const sortedEventData = [...sortedActiveEvents, ...sortedExpiredEvents];
+
+
+
 
   //Calendar Display
   // useEffect(() => {
@@ -187,7 +220,7 @@ export default function (props) {
           const startTime = moment(item.StartTime);
           const endTime = moment(item.EndTime);
           let colorClass;
-         console.log(item)
+          console.log(item)
           if (currentTime.isBefore(startTime)) {
             colorClass = 'event-yellow'; // Condition 1: StartTime is not yet started
           } else if (currentTime.isBetween(startTime, endTime)) {
@@ -195,7 +228,7 @@ export default function (props) {
           } else {
             colorClass = 'event-gray'; // Condition 3: EndTime is expired
           }
-          setuserName(item.User.username)
+          // setuserName(item.User.username)
           userEmailName = item.User.username;
           console.log(item)
           return {
@@ -206,18 +239,21 @@ export default function (props) {
             date: item.StartTime,
             EndTime: item.EndTime,
             User: item.User,
+            status: item.status,
             colorClass: colorClass // Add colorClass property to the object
           };
         });
+        // Filter out events with status "Rejected"
+        const filteredData = cdata.filter(item => item.status !== '𝐑𝐞𝐣𝐞𝐜𝐭𝐞𝐝');
+        setData(filteredData);
 
-
-        setData(cdata);
+        // setData(cdata);
         console.log(cdata)
       })
 
       .catch((e) => { console.log(e) });
   }, []);
-  
+
   console.log(username)
   // console.log(userEmailName)
 
@@ -398,6 +434,7 @@ export default function (props) {
                 closeButton
                 style={{ backgroundColor: 'lightgray' }}
               >
+
                 <Modal.Title>
                   <label style={{ display: 'block', marginBottom: '10px', color: '#444', fontFamily: 'Arial', fontSize: '20px' }}>
                     <span style={{ color: 'black', fontWeight: 'bold' }}> Hi, </span>
@@ -438,11 +475,9 @@ export default function (props) {
                     onChange={(e) => setroomName(e.target.value)}
                     required
                   >
-
-                    <option value="Big Room">Big Room</option>
-                    <option value="Small Room">Small Room</option>
-                    <option value="Booth One">Booth One</option>
-                    <option value="Booth Two">Booth Two</option>
+                    <option value="" disabled selected>Select Room</option>
+                    <option value="𝐓𝐰𝐞𝐥𝐯𝐞 𝐒𝐞𝐚𝐭𝐞𝐫 𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦">12 Seat</option>
+                    <option value="𝐒𝐢𝐱 𝐒𝐞𝐚𝐭𝐞𝐫 𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦">6 Seat</option>
                   </select>
 
                   <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '15px' }}>
@@ -503,9 +538,10 @@ export default function (props) {
                   trigger: "hover",
                   customClass: "PopoverStyle",
                   content: `
-                    <strong>Title:</strong> ${info.event.title}<br>
+                    <strong>Title:</strong>${info.event.title}</span><br>
                     <strong>Room Name:</strong> ${info.event.extendedProps.roomName}<br>
-                    <strong>Username:</strong> ${info.event.extendedProps.username}
+                    <strong>Username:</strong> ${info.event.extendedProps.username}<br>
+                    <strong>Meeting:</strong> ${info.event.extendedProps.status}
                   `,
                   html: true,
                 });
@@ -520,7 +556,7 @@ export default function (props) {
 
         <div className='row'>
           <div className='mt-5 mb-4'>
-            <h2 className='text-center'>🆈🅾🆄🆁 🅴🆅🅴🅽🆃🆂</h2>
+            <h2 className='text-center'>𝐘𝐨𝐮𝐫 𝐄𝐯𝐞𝐧𝐭𝐬</h2>
           </div>
         </div>
 
@@ -534,34 +570,42 @@ export default function (props) {
                   <th>Room Name</th>
                   <th>StartTime</th>
                   <th>EndTime</th>
+                  <th>Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
+
               <tbody>
-                {
-                  eventData.map((item) =>
-                    <tr key={item._id}>
-                      <td>{item.title}</td>
-                      <td>{item.roomName}</td>
-                      <td>
-                        {item.StartTime.split('T').join(' ⋆ ').slice(0, -5)}
-
-                        <span className="clock-animation">🕒</span>
-                      </td>
-                      <td>
-                        {item.EndTime.split('T').join(' ⋆ ').slice(0, -5)}
-
-                        <span className="clock-animation">🕒</span>
-                      </td>
-                      <td style={{ minWidth: 190 }}>
-                        {/* <Button size='sm' varient='primary' style={{ backgroundColor: 'Green' }} onClick={() => { handleViewShow(setRowData(item)) }}>View</Button>|
-                        <Button size='sm' varient='warning' className='text-black' style={{ backgroundColor: 'yellow' }} onClick={() => { handleEditShow(setRowData(item), setId(item._id)) }}>Edit</Button>| */}
-                        <Button size='sm' varient='danger' style={{ backgroundColor: 'Red' }} onClick={() => { handleViewShow(setRowData(item), setId(item._id), setDelete(true)) }}>𝘾𝙖𝙣𝙘𝙚𝙡 𝙈𝙚𝙚𝙩𝙞𝙣𝙜</Button>
-                      </td>
-                    </tr>
-
-                  )}
+                {sortedEventData.map((item) => (
+                  <tr key={item._id}>
+                    <td>{item.title}</td>
+                    <td>{item.roomName}</td>
+                    <td>
+                      {item.StartTime.split('T').join(' ⋆ ').slice(0, -5)}
+                      <span className="clock-animation"></span>
+                    </td>
+                    <td>
+                      {item.EndTime.split('T').join(' ⋆ ').slice(0, -5)}
+                      <span className="clock-animation"></span>
+                    </td>
+                    <td>{item.status}</td>
+                    <td style={{ minWidth: 190 }}>
+                      <Button
+                        size='sm'
+                        varient='danger'
+                        style={{ backgroundColor: 'Red' }}
+                        onClick={() => {
+                          handleViewShow(setRowData(item), setId(item._id), setDelete(true));
+                        }}
+                      >
+                        Cancel Meeting
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
+
+
             </table>
           </div>
         </div>

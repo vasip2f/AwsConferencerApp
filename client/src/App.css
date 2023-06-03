@@ -261,3 +261,37 @@
   .event-gray {
     background-color: rgb(241, 128, 128);
   }
+
+
+
+
+/* font style */
+
+.text-black {
+  color: rgba(28, 230, 230, 0.792);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-3xl {
+  font-size: 3rem;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.tracking-wider {
+  letter-spacing: 0.1em;
+}
+ 
+/* logout button style */
+.bg-light-blue {
+  background-color: lightblue;
+}
+
+.hover\:bg-red:hover {
+  background-color: rgb(9, 143, 201);
+}

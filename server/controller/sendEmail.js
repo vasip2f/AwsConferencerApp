@@ -138,7 +138,7 @@ sendEmail.post("/send/deletion/:name/:to/:title", async (req, res) => {
     from: "vkservice24hr@gmail.com",
     to: to,
     subject: `Event Canceled: ${title}`,
-    html: `Hi, We regret to inform you that the <strong><span style="color: red">${title}</span></strong> Event has been canceled.<br><br>We sincerely apologize for any inconvenience caused.<br><br>Best regards,<br>The Event Team`
+    html: `Hi, We inform you that the <strong><span style="color: red">${title}</span></strong> Event has been canceled.<br><br>Best regards,<br>The Event Team`
   };
 
   try {
@@ -196,7 +196,7 @@ sendEmail.post("/send/rejectmail/:name/:to/:title", async (req, res) => {
     from: "vkservice24hr@gmail.com",
     to: to,
     subject: `Event Rejected by:Superuser`,
-    html: `Hi,  ${name}<br><br> The Event <strong><span style="color:red">${title}</span></strong> is Rejected by <span style="color: blue"><strong>Superuser</strong></span> <br><br>If you have any query call SUPERUSER<br><br>Best regards,<br>The Event Team`
+    html: `Hi,  ${name}<br><br>We regret to inform you that the <strong><span style="color:red">${title}</span></strong> Event has been Rejected by<span style="color: blue"><strong>Superuser</strong></span> <br><br>We sincerely apologize for any inconvenience caused.If you have any query call SUPERUSER<br><br>Best regards,<br>The Event Team`
   };
 
   try {

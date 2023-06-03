@@ -147,7 +147,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import "../App.css";
-import { useNavigate,Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import { EyeIcon, EyeOffIcon } from "@heroicons/react/solid";
 import { toast } from "react-toastify";
@@ -249,7 +249,7 @@ function Register() {
                 type="text"
                 required="Please enter Your Name"
                 placeholder="Enter Your User Name"
-                className=" border border-zinc-400 outline-none  px-6 py-2 text-black "
+                className=" border border-zinc-400 outline-none  px-6 py-1 text-black "
               />
             </div>
             <div className="d-flex justify-content-between">
@@ -259,7 +259,7 @@ function Register() {
                 type="text"
                 required="Please enter Your Email"
                 placeholder="Enter Your Email"
-                className=" border border-zinc-400 outline-none  px-6 py-2 text-black "
+                className=" border border-zinc-400 outline-none  px-6 py-1 text-black "
               />
             </div>
             <div className="d-flex justify-content-between">
@@ -270,7 +270,7 @@ function Register() {
                   type={passwordVisible ? "text" : "password"} // show or hide password based on state
                   required="Please enter Your Password"
                   placeholder="Enter Your Password"
-                  className="border border-zinc-400 outline-none px-6 py-2 text-black w-full"
+                  className="border border-zinc-400 outline-none px-6 py-1 text-black w-full"
                 />
                 <button
                   type="button"
@@ -285,6 +285,8 @@ function Register() {
                 </button>
               </div>
             </div>
+            {/* SuperUser CheckBox */}
+            
             <div className="d-flex justify-content-between">
               <label className="text-xl ">𝐒𝐮𝐩𝐞𝐫 𝐔𝐬𝐞𝐫</label>
               <input
@@ -297,15 +299,16 @@ function Register() {
               <button type="submit" className=" bg-blue-300 rounded-lg">
                 Submit
               </button>
+              <div className="text-center">
+                <p>
+                  𝓐𝖑𝖗𝖊𝖆𝖉𝖞 𝖍𝖆𝖛𝖊 𝖆𝖓 𝖆𝖈𝖈𝖔𝖚𝖓𝖙?{" "}
+                  <Link to="/login" className="text-blue-500">
+                    Login
+                  </Link>
+                </p>
+              </div>
             </div>
-            <div className="text-center">
-              <p>
-              𝓐𝖑𝖗𝖊𝖆𝖉𝖞 𝖍𝖆𝖛𝖊 𝖆𝖓 𝖆𝖈𝖈𝖔𝖚𝖓𝖙?{" "}
-                <Link to="/login" className="text-blue-500">
-                  Login
-                </Link>
-              </p>
-            </div>
+
           </form>
         </div>
       </div>
