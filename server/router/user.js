@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../modal/User");
 const router = express.Router();
 const dns = require("dns");
+const authMiddleware = require("../config/authMiddleware")
+require('dotenv').config();
 
 
 
@@ -89,6 +91,132 @@ router.post(
 );
 
 // Login route
+// router.post(
+//   "/login",
+//   [
+//     check("email", "Please enter a valid email").isEmail(),
+//     check("password", "Please enter a valid password").isLength({
+//       min: 6,
+//     }),
+//   ],
+//   async (req, res) => {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//       return res.status(400).json({
+//         errors: errors.array(),
+//       });
+//     }
+
+//     const { email, password } = req.body;
+
+//     try {
+//       let user = await User.findOne({ email });
+//       if (!user) {
+//         return res.status(400).json({
+//           msg: "User Not Registered",
+//         });
+//       }
+
+//       const isMatch = await bcrypt.compare(password, user.password);
+
+//       if (!isMatch) {
+//         return res.status(401).json({
+//           msg: "Incorrect Password",
+//         });
+//       }
+
+//       const payload = {
+//         user: {
+//           id: user.id,
+//           isSuperUser: user.isSuperUser,
+//         },
+//       };
+
+//       jwt.sign(
+//         payload,
+//         "randomString",
+//         {
+//           expiresIn: 3600,
+//         },
+//         (err, token) => {
+//           if (err) throw err;
+//           res.status(200).json({
+//             token,
+//             user,
+//           });
+//         }
+//       );
+//     } catch (err) {
+//       console.log(err.message);
+//       res.status(500).send("Server Error");
+//     }
+//   }
+// );
+
+//second code
+// router.post(
+//   "/login",
+//   [
+//     check("email", "Please enter a valid email").isEmail(),
+//     check("password", "Please enter a valid password").isLength({
+//       min: 6,
+//     }),
+//   ],
+//   async (req, res) => {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//       return res.status(400).json({
+//         errors: errors.array(),
+//       });
+//     }
+
+//     const { email, password } = req.body;
+
+//     try {
+//       let user = await User.findOne({ email });
+//       if (!user) {
+//         return res.status(400).json({
+//           msg: "User Not Registered",
+//         });
+//       }
+
+//       const isMatch = await bcrypt.compare(password, user.password);
+
+//       if (!isMatch) {
+//         return res.status(401).json({
+//           msg: "Incorrect Password",
+//         });
+//       }
+
+//       const payload = {
+//         user: {
+//           id: user.id,
+//           isSuperUser: user.isSuperUser,
+//         },
+//       };
+
+//       // Generate a unique token based on the user's ID or email
+//       const token = jwt.sign(
+//         payload,
+//         process.env.JWT_SECRET,
+//         {
+//           expiresIn: 3600,
+//         }
+//       );
+
+//       res.status(200).json({
+//         token,
+//         user,
+//       });
+//     } catch (err) {
+//       console.log(err.message);
+//       res.status(500).send("Server Error");
+//     }
+//   }
+// );
+
+// third code 
+
 router.post(
   "/login",
   [
@@ -130,20 +258,29 @@ router.post(
         },
       };
 
-      jwt.sign(
-        payload,
-        "randomString",
-        {
-          expiresIn: 3600,
-        },
-        (err, token) => {
-          if (err) throw err;
-          res.status(200).json({
-            token,
-            user,
-          });
-        }
-      );
+      let token;
+      if (user.isSuperUser) {
+        token = jwt.sign(
+          payload,
+          process.env.JWT_SUPERUSER_SECRET,
+          {
+            expiresIn: 3600,
+          }
+        );
+      } else {
+        token = jwt.sign(
+          payload,
+          process.env.JWT_USER_SECRET,
+          {
+            expiresIn: 3600,
+          }
+        );
+      }
+
+      res.status(200).json({
+        token,
+        user,
+      });
     } catch (err) {
       console.log(err.message);
       res.status(500).send("Server Error");
@@ -151,8 +288,11 @@ router.post(
   }
 );
 
+
+
+
 // Get all users
-router.get("/getusers", async (req, res) => {
+router.get("/getusers", authMiddleware, async (req, res) => {
   try {
     const allUsers = await User.find();
     console.log(allUsers);
@@ -164,7 +304,7 @@ router.get("/getusers", async (req, res) => {
 });
 
 // Get user by ID
-router.get("/getusers/:id", async (req, res) => {
+router.get("/getusers/:id", authMiddleware, async (req, res) => {
   try {
     const userId = req.params.id;
     const user = await User.findById(userId);

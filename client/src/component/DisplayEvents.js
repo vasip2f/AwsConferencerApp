@@ -214,8 +214,9 @@ import '../index.css';
 import '../App.css';
 import Backendapi from '../Backendapi';
 import { toast } from 'react-toastify';
+import NavbarOne from '../pages/NavbarOne';
 
-export default function DisplayEvent() {
+export default function DisplayEvents() {
   const [eventData, setEventData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [eventsPerPage] = useState(10);
@@ -285,6 +286,7 @@ export default function DisplayEvent() {
 
   //third code
   useEffect(() => {
+    const token = localStorage.getItem("token"); // Get the token from localStorage
     axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/get-events`)
       .then((res) => {
         const sortedData = res.data.sort((a, b) => {
@@ -446,9 +448,12 @@ currentEvents.map(item =>{
 }) 
 
   return (
+
+    
     <div>
+      <NavbarOne />
       <div className="row">
-        <div className="mt-5 mb-4">
+        <div className="mt-5 mb-4 d-flex justify-content-center">
           <h2>𝐁𝐨𝐨𝐤𝐞𝐝 𝐄𝐯𝐞𝐧𝐭𝐬</h2>
         </div>
       </div>
@@ -456,7 +461,7 @@ currentEvents.map(item =>{
       <div className="row">
         <div className="table-responsive">
           <table className="table table-striped table-hover table-bordered">
-            <thead className="bg-warning text-white">
+            <thead className="bg-info text-white">
               <tr>
                 <th className='text-black'>Title
                   <input

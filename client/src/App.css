@@ -295,3 +295,18 @@
 .hover\:bg-red:hover {
   background-color: rgb(9, 143, 201);
 }
+
+/* logout  button */
+@media (max-width: 768px) {
+  .my-1 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .md\:mx-1,
+  .md\:my-0 {
+    margin: 0.5rem;
+  }
+}
+
+

@@ -179,6 +179,9 @@ function Login() {
         Backendapi.REACT_APP_SuperUser_EMAIL = email;
     };
 
+   
+    
+
     function handleSubmit(event) {
         event.preventDefault();
         const data = {
@@ -188,8 +191,9 @@ function Login() {
         };
 
         localStorage.setItem("email", email);
-        localStorage.setItem("objectId", objectId);
-
+        // localStorage.setItem("objectId", objectId);
+        // const token = localStorage.getItem("token"); // Get the token from localStorage
+        // console.log(token)
         axios
             .post(`${Backendapi.REACT_APP_BACKEND_API_URL}/user/login`, data)
             .then((res) => {
@@ -216,7 +220,7 @@ function Login() {
                     // Set the superuser email dynamically
                     setSuperUserEmail(res.data.user.email);
                     console.log(res.data.user.email)
-                    navigate("/dashboard");
+                    navigate("/DispalyEvents");
                 } else {
                     navigate("/Calendar");
                 }
@@ -298,6 +302,13 @@ function Login() {
 }
 
 export default Login;
+
+
+
+
+
+
+
 
 
 

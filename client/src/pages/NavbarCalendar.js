@@ -62,7 +62,7 @@ function NavbarCalendar() {
             </NavLink> */}
 
             <NavLink
-              to="/dashboard"
+              to="/DispalyEvents"
               activeClassName="font-bold"
               className="my-1 text-gray-100 md:mx-4 md:my-0 hover:text-gray-300 text-black flex items-center"
               onClick={() => setShowMenu(false)}

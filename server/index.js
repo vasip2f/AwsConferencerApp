@@ -20,10 +20,12 @@ const sendEmail = require("./controller/sendEmail");
 const EventTimeSlotRoute = require('./router/EventTimeSlotRoute');
 const EventRoute = require('./router/EventRoutes');
 const SuperUserRoute = require("./router/SuperUserRoute");
+const authMiddleware = require("./config/authMiddleware")
 
 
 InitiateMongoServer();
 // middleware
+// app.use(authMiddleware);
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
 app.use(express.json());

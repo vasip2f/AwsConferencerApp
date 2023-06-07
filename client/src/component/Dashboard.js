@@ -28,7 +28,7 @@ function Dashboard() {
         {/* <Link to="/Calendar">
           <Button style={{ backgroundColor: 'skyblue' }}><i className='fa fa-plu'></i>𝐁𝐨𝐨𝐤 𝐘𝐨𝐮𝐫 𝐑𝐨𝐨𝐦</Button>
         </Link> */}
-        <DisplayEvents />
+        {/* <DisplayEvents /> */}
 
       </div>
     </div>

@@ -564,7 +564,7 @@ export default function (props) {
         <div className='row'>
           <div className='table-responsive'>
             <table className='table table-striped table-hover table-bordered'>
-              <thead className='bg-warning text-white'>
+              <thead className='bg-info text-white'>
                 <tr>
                   <th>Title</th>
                   <th>Room Name</th>

@@ -111,7 +111,7 @@ const sendEmail = require('./sendEmail');
 //   };
 
 // third code
-const CreateEvent = async (req, res) => {
+const CreateEvent =  async (req, res) => {
   const { username, title, roomName, StartTime, EndTime, availability, User } = req.body;
 
   const startTimeIST = moment.tz(StartTime, 'YYYY-MM-DD HH:mm:ss', 'UTC').tz('Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss');
