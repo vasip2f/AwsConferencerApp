@@ -179,8 +179,8 @@ function Login() {
         Backendapi.REACT_APP_SuperUser_EMAIL = email;
     };
 
-   
-    
+
+
 
     function handleSubmit(event) {
         event.preventDefault();
@@ -255,7 +255,7 @@ function Login() {
                             />
                         </div>
                         <div className="flex">
-                            <label className="text-xl ">𝐏𝐚𝐬𝐬𝐰𝐨𝐫𝐝 </label>
+                            <label className="text-xl">𝐏𝐚𝐬𝐬𝐰𝐨𝐫𝐝</label>
                             <div className="relative">
                                 <input
                                     onChange={(e) => setPassword(e.target.value)}
@@ -267,7 +267,7 @@ function Login() {
                                 <button
                                     type="button"
                                     onClick={toggleShowPassword}
-                                    className="absolute top-1/2 right-2 transform -translate-y-1/2"
+                                    className="absolute top-1/2 right-2 transform -translate-y-1/2 flex items-center justify-center rounded-full bg-transparent "
                                 >
                                     {showPassword ? (
                                         <EyeOffIcon className="h-5 w-5 text-gray-400" />

@@ -230,52 +230,132 @@ function Register() {
   }
 
   return (
+    // <div>
+    //   <Navbar />
+    //   <div
+    //     className="w-screen h-[90vh] d-flex  justify-content-center align-item-center items-top login-page"
+    //     style={{ padding: "50px" }}
+    //   >
+    //     <div className="blur-container d-flex align-item-center h-75 ">
+    //       <form
+    //         onSubmit={(e) => handleSubmit(e)}
+    //         className="d-flex-col w-[100%] space-y-4 align-item-center "
+    //       >
+    //         <h1 className="text-xl text-center ">🆂🅸🅶🅽🆄🅿</h1>
+    //         <div className="d-flex justify-content-between">
+    //           <label className="text-xl ">𝐔𝐬𝐞𝐫 𝐍𝐚𝐦𝐞</label>
+    //           <input
+    //             onChange={(e) => setUserName(e.target.value)}
+    //             type="text"
+    //             required="Please enter Your Name"
+    //             placeholder="Enter Your User Name"
+    //             className=" border border-zinc-400 outline-none  px-6 py-1 text-black "
+    //           />
+    //         </div>
+    //         <div className="d-flex justify-content-between">
+    //           <label className="text-xl ">𝐄𝐦𝐚𝐢𝐥</label>
+    //           <input
+    //             onChange={(e) => setEmail(e.target.value)}
+    //             type="text"
+    //             required="Please enter Your Email"
+    //             placeholder="Enter Your Email"
+    //             className=" border border-zinc-400 outline-none  px-6 py-1 text-black "
+    //           />
+    //         </div>
+    //         <div className="d-flex justify-content-between">
+    //           <label className="text-xl ">𝐏𝐚𝐬𝐬𝐰𝐨𝐫𝐝</label>
+    //           <div className="relative">
+    //             <input
+    //               onChange={(e) => setPassword(e.target.value)}
+    //               type={passwordVisible ? "text" : "password"} // show or hide password based on state
+    //               required="Please enter Your Password"
+    //               placeholder="Enter Your Password"
+    //               className="border border-zinc-400 outline-none px-6 py-1 text-black w-full"
+    //             />
+    //             <button
+    //               type="button"
+    //               onClick={togglePasswordVisibility}
+    //               className="absolute top-1/2 right-2 transform -translate-y-1/2 flex items-center justify-center rounded-full bg-transparent "
+    //             >
+    //               {passwordVisible ? (
+    //                 <EyeOffIcon className="h-5 w-5 text-gray-400" />
+    //               ) : (
+    //                 <EyeIcon className="h-5 w-5 text-gray-400" />
+    //               )}
+    //             </button>
+    //           </div>
+    //         </div>
+    //         {/* SuperUser CheckBox */}
+
+    //         {/* <div className="d-flex justify-content-between">
+    //           <label className="text-xl ">𝐒𝐮𝐩𝐞𝐫 𝐔𝐬𝐞𝐫</label>
+    //           <input
+    //             onChange={handleSuperUserChange}
+    //             type="checkbox"
+    //             className="h-5 w-5"
+    //           />
+    //         </div> */}
+    //         <div className="w-[100%]" style={{ textAlign: "center" }}>
+    //           <button type="submit" className=" bg-blue-300 rounded-lg">
+    //             Submit
+    //           </button>
+    //           <div className="text-center">
+    //             <p>
+    //               𝓐𝖑𝖗𝖊𝖆𝖉𝖞 𝖍𝖆𝖛𝖊 𝖆𝖓 𝖆𝖈𝖈𝖔𝖚𝖓𝖙?{" "}
+    //               <Link to="/login" className="text-blue-500">
+    //                 Login
+    //               </Link>
+    //             </p>
+    //           </div>
+    //         </div>
+
+    //       </form>
+    //     </div>
+    //   </div>
+    // </div>
+
     <div>
-      <Navbar />
-      <div
-        className="w-screen h-[90vh] d-flex  justify-content-center align-item-center items-top login-page"
-        style={{ padding: "50px" }}
-      >
-        <div className="blur-container d-flex align-item-center h-75 ">
-          <form
-            onSubmit={(e) => handleSubmit(e)}
-            className="d-flex-col w-[100%] space-y-4 align-item-center "
-          >
-            <h1 className="text-xl text-center ">🆂🅸🅶🅽🆄🅿</h1>
+      <div className="sl-screen flex">
+        <Navbar />
+      </div>
+      <div className="w-screen h-[90vh] flex justify-center items-center login-page">
+        <div className="blur-container">
+          <form onSubmit={(e) => handleSubmit(e)} className="d-flex-col w-[100%] space-y-4 align-item-center">
+            <h1 className="text-center text-xl">🆂🅸🅶🅽🅸🅽</h1>
             <div className="d-flex justify-content-between">
-              <label className="text-xl ">𝐔𝐬𝐞𝐫 𝐍𝐚𝐦𝐞</label>
+              <label className="text-xl">𝐔𝐬𝐞𝐫𝐍𝐚𝐦𝐞</label>
               <input
                 onChange={(e) => setUserName(e.target.value)}
                 type="text"
                 required="Please enter Your Name"
                 placeholder="Enter Your User Name"
-                className=" border border-zinc-400 outline-none  px-6 py-1 text-black "
+                className="border border-zinc-400 outline-none px-6 py-1 text-black"
               />
             </div>
             <div className="d-flex justify-content-between">
-              <label className="text-xl ">𝐄𝐦𝐚𝐢𝐥</label>
+              <label className="text-xl">𝐄𝐦𝐚𝐢𝐥</label>
               <input
                 onChange={(e) => setEmail(e.target.value)}
                 type="text"
                 required="Please enter Your Email"
                 placeholder="Enter Your Email"
-                className=" border border-zinc-400 outline-none  px-6 py-1 text-black "
+                className="border border-zinc-400 outline-none px-6 py-1 text-black"
               />
             </div>
             <div className="d-flex justify-content-between">
-              <label className="text-xl ">𝐏𝐚𝐬𝐬𝐰𝐨𝐫𝐝</label>
+              <label className="text-xl">𝐏𝐚𝐬𝐬𝐰𝐨𝐫𝐝</label>
               <div className="relative">
                 <input
                   onChange={(e) => setPassword(e.target.value)}
-                  type={passwordVisible ? "text" : "password"} // show or hide password based on state
+                  type={passwordVisible ? "text" : "password"}
                   required="Please enter Your Password"
                   placeholder="Enter Your Password"
-                  className="border border-zinc-400 outline-none px-6 py-1 text-black w-full"
+                  className="border border-zinc-400 outline-none px-6 py-1 text-black"
                 />
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
-                  className="absolute top-1/2 right-2 transform -translate-y-1/2"
+                  className="absolute top-1/2 right-2 transform -translate-y-1/2 flex items-center justify-center rounded-full bg-transparent"
                 >
                   {passwordVisible ? (
                     <EyeOffIcon className="h-5 w-5 text-gray-400" />
@@ -286,29 +366,28 @@ function Register() {
               </div>
             </div>
             {/* SuperUser CheckBox */}
-            
-            <div className="d-flex justify-content-between">
+
+            {/* <div className="d-flex justify-content-between">
               <label className="text-xl ">𝐒𝐮𝐩𝐞𝐫 𝐔𝐬𝐞𝐫</label>
               <input
                 onChange={handleSuperUserChange}
                 type="checkbox"
                 className="h-5 w-5"
               />
-            </div>
+            </div> */}
             <div className="w-[100%]" style={{ textAlign: "center" }}>
-              <button type="submit" className=" bg-blue-300 rounded-lg">
+              <button type="submit" className="bg-blue-300 rounded-lg">
                 Submit
               </button>
-              <div className="text-center">
-                <p>
-                  𝓐𝖑𝖗𝖊𝖆𝖉𝖞 𝖍𝖆𝖛𝖊 𝖆𝖓 𝖆𝖈𝖈𝖔𝖚𝖓𝖙?{" "}
-                  <Link to="/login" className="text-blue-500">
-                    Login
-                  </Link>
-                </p>
-              </div>
             </div>
-
+            <div className="text-center">
+              <p>
+                𝓐𝖑𝖗𝖊𝖆𝖉𝖞 𝖍𝖆𝖛𝖊 𝖆𝖓 𝖆𝖈𝖈𝖔𝖚𝖓𝖙?{" "}
+                <Link to="/login" className="text-blue-500">
+                  Login
+                </Link>
+              </p>
+            </div>
           </form>
         </div>
       </div>

@@ -1,7 +1,7 @@
 
 const Backendapi = {
-    REACT_APP_BACKEND_API_URL:"http://localhost:9008",
-    REACT_APP_SuperUser_EMAIL:"vasikaran@p2fsemi.in"// Initial value as an empty string
+    REACT_APP_BACKEND_API_URL:"http://65.0.135.17",
+    REACT_APP_SuperUser_EMAIL:"areesh.kumar@p2fsemi.com"// Initial value as an empty string
     
     
  }
